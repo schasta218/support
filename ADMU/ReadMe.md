@@ -543,11 +543,13 @@ LOG: 'Starting loadstate tool on user ' $netbiosname + '\' + $DomainUserName + '
 
 # Future Development
 
+> * Sign .exe
+> * Combine and improve .exe to single file
 > * Domain validation
 > * Ability to convert multiple accounts
 > * Custom USMT xml templates
 > * Show local, domain & azure accounts
 > * Show if account is in local admin group
-> * Ability to change username
+> * Ability to change & edit username
 > * etc.
 
