@@ -17,10 +17,13 @@
   - [Powershell](#Powershell)
   - [EXE](#EXE)
 - [About the Tool:](#About-the-Tool)
-  - [Prerequisites](#Prerequisites)
   - [Supported O/S Versions](#Supported-OS-Versions)
+  - [Requirements](#Requirements)
+  - [EULA & Legal Explanation](#EULA--Legal-Explanation)
+  - [Error logging & troubleshooting](#Error-logging--troubleshooting)
   - [Advanced Deployment Scenarios](#Advanced-Deployment-Scenarios)
   - [Protected content migration dialogue explanation](#Protected-content-migration-dialogue-explanation)
+  - [Example Scenario](#Example-Scenario)
   - [JCADMU Steps - What is the script doing?](#JCADMU-Steps---What-is-the-script-doing)
     - [ADK & USMT INSTALLER](#ADK--USMT-INSTALLER)
 - [Limitations of User Account Conversion:](#Limitations-of-User-Account-Conversion)
@@ -95,11 +98,9 @@
 ### Azure AD Join
 
 > Windows 10 systems can be ‘Azure AD Joined’ to an ‘Azure AD’ instance and shows up under ‘Devices’. Based on the ‘Azure AD’ settings, Users and Admins can associate a system to an ‘Azure AD’ identity allowing login to the system with ‘Azure AD’ credentials. This creates a cached local account that is associated to this account and named ‘AzureAD\Username’.
-
-
+>
 > This type of account is not supported by JumpCloud takeover when binding users to a system and would create a new ‘local profile’ in this example if JumpCloud username was ‘BradStevens’ it would create ‘10PRO1809-1\BradStevens’ and not sync/link with the ‘AzureAD\BradStevens’ profile.
-
-
+>
 > The ADMU v1.0.0 tool can not currently convert this account to a ‘local profile’. However this functionality will be added in the future to allow administrators a way to convert ‘Azure Ad Joined’ systems and accounts to migrate to JumpCloud.
 
 ![image0](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_0.png)
@@ -129,9 +130,9 @@
 
 
 >* A registry hive. The registry hive is the file NTuser.dat. The hive is loaded by the system at user logon, and it is mapped to the HKEY_CURRENT_USER registry key. The user's registry hive maintains the user's registry-based preferences and configuration.
-
+>
 > * A set of profile folders stored in the file system. User-profile files are stored in the Profiles directory, on a folder per-user basis. The user-profile folder is a container for applications and other system components to populate with sub-folders, and per-user data such as documents and configuration files. Windows Explorer uses the user-profile folders extensively for such items as the user's Desktop, Start menu and Documents folder.
-
+>
 > * App data folder contains data and settings related to applications. Each windows user/profile has its own broken down into roaming and local. If a system is domain joined certain settings can roam across the domain vs local will only be specific to that user on that system.
 
 # Running the ADMU Tool:
@@ -187,13 +188,6 @@
 
 # About the Tool:
 
-## Prerequisites
-.net framework
-
-JumpCloud Agent Requirements
-
-Windows 10 ADK
-
 ## Supported O/S Versions
 
 Windows 7
@@ -202,64 +196,54 @@ Windows 8.1
 
 Windows 10
 
-Running an unsupported version? Reach out to [support@Jumpcloud.com](mailto:support@Jumpcloud.com) to submit a request to support your version of Windows.
 
-Both the GUI and EXE implementations require a specific .net version to work.
-
+> Currently both the GUI and EXE implementations require a specific .net version to work.
 
 
-Windows 7 ships with .net 3.5.1 by default
+
+> Windows 7 ships with .net 3.5.1 by default
 
 ![image4](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_4.png)
 
 
 
-Windows 8.1 ships with .net 4.5 and .net 3.5 not enabled by default
+> Windows 8.1 ships with .net 4.5 and .net 3.5 not enabled by default
 
 ![image5](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_5.png)
 
 
 
-Windows 10 ships with .net 4.7 and .net 3.5 not enabled by default
+> Windows 10 ships with .net 4.7 and .net 3.5 not enabled by default
 
 ![image6](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_6.png)
 
 
 
-> To get around this we have a win7 and 8.1/10 versions of each .exe
+> To get around this currently we have a .net3.5 and .net4 versions of both jcadmu.exe & jcadmu_gui.exe
 >
-> This means for example if you install the win10/.net 4.5 on a windows 7 system it won’t ask to install and interfere with a zero touch install.
+> This will be addressed in the future and ideally there will be a single .exe for all systems and requirements will be handled behind the scenes.
+
+
+## Requirements
+> The ADMU tool v1.0.0 assumes and requires the following to work
 >
-> This will be addressed in the future and ideally there will be a single exe for all systems and requirements will be handled behind the scenes.
+> * System should be currently Domain bound (The system does NOT have to be connected or currently connected to a Domain Controller).
+> * A domain based profile should exist on the system to convert
+> * Once the user account is converted the JumpCloud agent will be installed and the system bound to the JumpCloud instance
 
 
 
-The ADMU tool v1.0.0 assumes and requires the following to work
-
-* System should be currently Domain bound (The system does NOT have to be connected or currently connected to a Domain Controller).
-* A domain based profile should exist on the system to convert
-* Once the user account is converted the JumpCloud agent will be installed and the system bound to the JumpCloud instance
-
-
-
-In order to provide administrators multiple ways to deploy and utilize the JumpCloud ADMU tool in different scenarios and enviroments we allow it to be run in the following ways:
-
-
-EULA & Legal Explanation
+## EULA & Legal Explanation
 
 ```
 TODO..
 ```
 
-Supporting tools & prerequisites
+## Error logging & troubleshooting
 
-> * .net requirements
-> * Agent framework requirements
-> * USMT and ADK requirements
-
-
-Error logging & troubleshooting
-
+```
+TODO..
+```
 > * Logging levels
 > * example errors
 > * troubleshooting scenarios
@@ -267,6 +251,9 @@ Error logging & troubleshooting
 
 
 ## Advanced Deployment Scenarios
+```
+TODO..
+```
 > * Logon script via GPO
 > * Meraki deployment
 > * PDQ deployment
@@ -279,34 +266,18 @@ Error logging & troubleshooting
 
 > Currently upon the completion of account conversion the ‘protected content migration’ window is shown on first login. It asks for the password from the old computer. However this will not accept any old or new password even if entered correctly. This is a known bug and clicking cancel will have no ill effect and allow the wizard to be dismissed. In a future version of JCADMU the ‘DPAPI config’ will be excluded from the migration and not show on first login.
 
+## Example Scenario
+
 ![image13](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_13.png)
-
-
-
-Application migration scenarios
-
-> * Outlook
-> * app data specific
-> * no app data
-
-
-
-Unsupported scenarios and account types
-
-
-
-
-
-
 
 ![image14](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_14.png)
 
 
 
-> Scenario: Domain joined system 10PRO18091 on domain JCADB2.local with Local Domain Account named JCADB2\bob.lazar and a local account named 10PRO18091\Administrator.
+> Domain joined system 10PRO18091 on domain JCADB2.local with Local Domain Account named JCADB2\bob.lazar and a local account named 10PRO18091\Administrator.
 
 
-
+> TODO:
 > * Convert JCADB2\bob.lazar to 10PRO18091\blazar
 > * Unjoin System from JCADB2.local domain
 > * Install JumpCloud agent onto system
@@ -327,13 +298,9 @@ Unsupported scenarios and account types
 
 
 
- > ‘USMT status’ this is true if microsoft ADMT & USMT are found on the system in the required location. If this is false, the required tools and prerequisites will be downloaded and installed in the next steps (this will add time to the migration).
+ > ‘USMT status’ this is true if microsoft ADMT & USMT are found on the system in the required location. If this is false, the required tools and prerequisites will be downloaded and installed in the next steps.
 
-
-
-> The ‘Accept EULA’ box allows true or false to be selected. More Info will link to more specifics on the EULA.
-
-
+> The ‘Accept EULA’ box allows true or false to be selected. More Info will link to more specifics on the EULA in this document.
 
 > You will not be able to move forward with migration until the red text boxes are corrected and a profile is selected.
 
@@ -341,13 +308,15 @@ Unsupported scenarios and account types
 
 ![image18](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_18.png)
 
-[https://console.jumpcloud.com/#/systems/new](https://console.jumpcloud.com/#/systems/new)
 
-> The connect key specific to your organization and JC instance can be found in the systems, new system, windows aside.
+
+
+
+> The connect key specific to your organization and JC instance can be found in the systems, new system, windows aside [here](https://console.jumpcloud.com/#/systems/new).
 
 ![image19](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_19.png)
 
-> Once a profile is selected and text boxes correctly filled out, the ‘Migrate Profile’ button will become active and can be clicked.
+> Once a profile is selected and text boxes correctly filled out, the ‘Migrate Profile’ button will become active and can be clicked and the JCADMU.ps1 script will be passed the parameters.
 
 
 ## JCADMU Steps - What is the script doing?
@@ -377,7 +346,7 @@ LOG: 'Microsoft Windows ADK  - User State Migration Tool not found in c:\adk. Ma
 
 ![image21](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_21.png)
 
-> On win7 base systems .net framework is required for the ADK/USMT installer to work.
+> On win7 base systems .net framework is required for the ADK/USMT installer to work. This will be installed in the background if not present.
 
 
 
@@ -399,7 +368,7 @@ LOG: 'Installing Windows ADK at c:\adk\ please complete GUI prompts & accept EUL
 
 ![image27](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_27.png)
 
-Once this is completed the script will continue to the next steps and output to the log:
+> Once this is completed the script will continue to the next steps and output to the log:
 
 ```powershell
 LOG: 'Microsoft Windows ADK - User State Migration Tool ready to be used.'
@@ -442,8 +411,6 @@ Log: 'Starting scanstate tool on user '$netbiosname + '\' + $DomainUserName'
 ```powershell
 Log: 'Scanstate Command: .\scanstate.exe c:\Windows\Temp\JCADMU\store /nocompress /i:miguser.xml /i:migapp.xml /l:c:\Windows\Temp\JCADMU\store\scan.log /progress:c:\Windows\Temp\JCADMU\store\scan_progress.log /o /ue:*\* /ui:' $netbiosname /c'
 ```
-
-
 
 > This step is capturing the current state of the profile and making a copy in c:\windows\temp\JCADMU\
 > 
@@ -496,13 +463,13 @@ LOG: 'Starting loadstate tool on user ' $netbiosname + '\' + $DomainUserName + '
 
 
 
-> Currently the JumpCloud agent will not run if the system is bound to a domain and the ‘network category’.
+> Currently by design the JumpCloud agent service will not start if the system is bound to a domain and the ‘network category’ is 'DomainAuthenticated'.
 
 ![image35](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_35.png)
 
 
 
-> If the agent install is successful the system will be prompted to reboot, this could be canceled with a keypress, if detected the system will leave the domain on next reboot. This step is required for the JumpCloud agent to start and check in to the console. At this stage the script will also delete the temporary duplicate copy of the profile made by the USMT scanstate tool in the previous step. If the script fails at a previous step this directory will still exist on the system until it gets to this step and succeeds.
+> If the agent install is successful the system will be prompted to reboot, this could be canceled with a keypress, if detected the system will leave the domain on next reboot. This step is required for the JumpCloud agent to start and show in to the console. At this stage the script will also delete the temporary duplicate copy of the profile made by the USMT scanstate tool in the previous step. If the script fails at a previous step this directory will still exist on the system until it gets to this step and succeeds.
 
 
 
@@ -510,7 +477,7 @@ LOG: 'Starting loadstate tool on user ' $netbiosname + '\' + $DomainUserName + '
 
 ![image37](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_37.png)
 
-> Once the system checks in, the Jumpcloud user can be bound to the system. If the username matches the account will be ‘taken over’ and the password will update and sync with jumpcloud.
+> Once the system checks in, the coresponding Jumpcloud user can be bound to the system. If the username matches the account will be ‘taken over’ and the password will update and sync with jumpcloud.
 
 ![image38](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_38.png)
 
