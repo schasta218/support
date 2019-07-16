@@ -106,12 +106,10 @@ This type of account is not supported by JumpCloud takeover when binding users t
 
 The ADMU v1.0.0 tool can not currently convert this account to a ‘local profile’. However this functionality will be added in the future to allow administrators a way to convert ‘Azure Ad Joined’ systems and accounts to migrate to JumpCloud.
 
+![image0](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_0.png)
 
 
-![image0](https://raw.githubusercontent.com/TheJumpCloud/support-admin-tools/master/JumpCloud.Migration/JCADMU/images/img_0.png?token=AIMZ5WQY4QX3ES6KMY4DSOS5GX6QK)
-
-
-![image1](https://raw.githubusercontent.com/TheJumpCloud/support-admin-tools/master/JumpCloud.Migration/JCADMU/images/img_1.png?token=AIMZ5WQY4QX3ES6KMY4DSOS5GX6QK)
+![image1](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_1.png)
 
 
 
@@ -121,9 +119,9 @@ A system can also be ‘registered’ to ‘Azure AD’, this is primarily for B
 
 
 
-![image alt text](img_2.png)
+![image2](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_2.png)
 
-![image alt text](img_3.png)
+![image3](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_3.png)
 
 
 
@@ -168,19 +166,19 @@ Both the GUI and EXE implementations require a specific .net version to work.
 
 Windows 7 ships with .net 3.5.1 by default
 
-![image alt text](img_4.png)
+![image4](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_4.png)
 
 
 
 Windows 8.1 ships with .net 4.5 and .net 3.5 not enabled by default
 
-![image alt text](img_5.png)
+![image5](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_5.png)
 
 
 
 Windows 10 ships with .net 4.7 and .net 3.5 not enabled by default
 
-![image alt text](img_6.png)
+![image6](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_6.png)
 
 
 
@@ -215,7 +213,7 @@ This is a Powershell launched GUI that utilizes WPF to collect input parameters 
 
 If the GUI is ran and the system is not domain joined the utility will not let the user continue with the process. The only option is to quit the application
 
-![image alt text](img_7.png)
+![image7](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_7.png)
 
 
 
@@ -226,11 +224,11 @@ This function can be passed the required parameters and utilized in larger or si
 
 The powershell script jcadmu.ps1 requires both files to be present in the same directory as it relies on functions from the import_functions.ps1 file to work.
 
-![image alt text](img_8.png)
+![image8](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_8.png)
 
 
 
-![image alt text](img_9.png)
+![image9](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_9.png)
 
 
 
@@ -244,15 +242,15 @@ If -AcceptEULA $true is not added it will default to $false and prompt/confirmat
 
 The Powershell script has validation on the parameters and requires them to not to be empty and the -jumpcloudconnectkey to be 40chars or it will not move forward.
 
-![image alt text](img_10.png)
+![image10](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_10.png)
 
 
 
 Currently if you pass in a domain username that doesn’t exist it will continue and error at a later part in the script when it tries to load the empty state to the new local account. Validation of this user accounts existence both locally and on the domain will be added into a future version to better gate and only allow conversions of possible accounts. This is better controlled by the GUI implementation and its selection list.
 
-![image alt text](img_11.png)
+![image11](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_11.png)
 
-![image alt text](img_12.png)
+![image12](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_12.png)
 
 
 
@@ -326,7 +324,7 @@ Unsupported scenarios and account types
 
 
 
-![image alt text](img_14.png)
+![image14](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_14.png)
 
 
 
@@ -340,15 +338,15 @@ Scenario: Domain joined system 10PRO18091 on domain JCADB2.local with Local Doma
 
 
 
-![image alt text](img_15.png)
+![image15](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_15.png)
 
 
 
-![image alt text](img_16.png)
+![image16](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_16.png)
 
 JCADMU GUI utility is launched
 
-![image alt text](img_17.png)
+![image17](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_17.png)
 
 Local accounts are listed at the top of the window, showing the username, if the profile is currently loaded, the last time it was used and if roaming is configured. It also lists the computer name, domain name .
 
@@ -366,13 +364,13 @@ You will not be able to move forward with migration until the red text boxes are
 
 
 
-![image alt text](img_18.png)
+![image18](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_18.png)
 
 [https://console.jumpcloud.com/#/systems/new](https://console.jumpcloud.com/#/systems/new)
 
 The connect key specific to your organization and JC instance can be found in the systems, new system, windows aside.
 
-![image alt text](img_19.png)
+![image19](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_19.png)
 
 Once a profile is selected and text boxes correctly filled out, the ‘Migrate Profile’ button will become active and can be clicked.
 
@@ -393,7 +391,7 @@ Once a profile is selected and text boxes correctly filled out, the ‘Migrate P
 
 
 
-![image alt text](img_20.png)
+![image20](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_20.png)
 
 If the system already has ADK/USMT installed on the system but is not located in c:\adk the script will error and return:
 
@@ -403,7 +401,7 @@ This will need to be corrected before the tool can move forward, so ADK/USMT sho
 
 
 
-![image alt text](img_21.png)
+![image21](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_21.png)
 
 On win7 base systems .net framework is required for the ADK/USMT installer to work.
 
@@ -415,17 +413,17 @@ If ‘Accept EULA’ parameter is equal to $false or not present the end user wi
 LOG: 'Installing Windows ADK at c:\adk\ please complete GUI prompts & accept EULA within 5mins or it will exit.'
 ```
 
-![image alt text](img_22.png)
+![image22](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_22.png)
 
-![image alt text](img_23.png)
+![image23](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_23.png)
 
-![image alt text](img_24.png)
+![image24](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_24.png)
 
-![image alt text](img_25.png)
+![image25](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_25.png)
 
-![image alt text](img_26.png)
+![image26](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_26.png)
 
-![image alt text](img_27.png)
+![image27](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_27.png)
 
 Once this is completed the script will continue to the next steps and output to the log:
 
@@ -434,7 +432,7 @@ LOG: 'Microsoft Windows ADK - User State Migration Tool ready to be used.'
 ```
 
 
-![image alt text](img_28.png)
+![image28](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_28.png)
 
 If the end user does not complete the above steps in 5mins the script will timeout and exit and have to be run again from the beginning.
 
@@ -450,11 +448,11 @@ Log: 'Installing Windows ADK at c:\adk\ silently. By using "$AcceptEULA = "true"
 
 If installed on the system it would show:
 
-![image alt text](img_29.png)
+![image29](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_29.png)
 
 Control Panel > Add remove programs Entry
 
-![image alt text](img_30.png)
+![image30](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_30.png)
 
 C:\adk installed folders
 
@@ -485,9 +483,9 @@ Although this adds ‘duplication’ time and space it also provides the ability
 
 
 
-![image alt text](img_31.png)
+![image31](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_31.png)
 
-![image alt text](img_32.png)
+![image32](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_32.png)
 
 UPDATE TO C:\WINDOWS\TEMP\JCADMU\
 
@@ -514,7 +512,7 @@ The ‘Loadstate’ command is run and used to convert the captured domain profi
 
 
 
-![image alt text](img_33.png)
+![image33](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_33.png)
 
 Once the conversion is completed the newly converted/created user is added to the computers ‘User group’. This allows the new account to show up on the logon screen and be used.
 
@@ -528,13 +526,13 @@ They agent is then installed using the passed in Connect Key. If this key was in
 
 
 
-![image alt text](img_34.png)
+![image34](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_34.png)
 
 
 
 Currently the JumpCloud agent will not run if the system is bound to a domain and the ‘network category’.
 
-![image alt text](img_35.png)
+![image35](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_35.png)
 
 
 
@@ -542,22 +540,21 @@ If the agent install is successful the system will be prompted to reboot, this c
 
 
 
-![image alt text](img_36.png)
+![image36](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_36.png)
 
-![image alt text](img_37.png)
+![image37](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_37.png)
 
 Once the system checks in, the Jumpcloud user can be bound to the system. If the username matches the account will be ‘taken over’ and the password will update and sync with jumpcloud.
 
-![image alt text](img_38.png)
+![image38](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_38.png)
 
 Now the user can login with the same password as JumpCloud. This step will be automated in a future version utilizing ‘system context API’.
 
 
 
-![image alt text](img_39.png)
+![image39](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_39.png)
 
-![image alt text](img_40.png)
-
+![image40](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_40.png)
 
 
 The system will now be bound to JumpCloud and no longer bound to the active directory domain. However the system still has a local copy of the original cached domain profile. This can be seen as ‘Account Unknown’ in the user profiles screen, and the corresponding folder in ```C:\Users\.``` This is useful incase the administrator wants to reverse or rejoin the system and access the previous domain account. For example maybe the conversion process broke a business critical application and they need a way for the user to quickly get back to the previous state.
@@ -567,7 +564,7 @@ The system will now be bound to JumpCloud and no longer bound to the active dire
 In that case the administrator can just rejoin the system to the domain (the Jumpcloud agent will no longer function due to the network configuration changing back to DomainAuthenticated), but the profile will return to how it was.
 
 
-![image alt text](img_41.png)
+![image41](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_41.png)
 
 
 # Limitations of User Account Conversion:
@@ -583,7 +580,7 @@ In future iterations of the tool it would be possible to allow and document a pr
 
 ## Examples:
 
-![image alt text](img_42.png)
+![image42](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_42.png)
 
  Windows default apps
 
@@ -593,7 +590,7 @@ After converting the account, outlooks .ost offline cache file must be recreated
 
 [https://blogs.technet.microsoft.com/askds/2010/02/11/usmt-ost-and-pst/](https://blogs.technet.microsoft.com/askds/2010/02/11/usmt-ost-and-pst/)
 
-![image alt text](img_43.png)
+![image43](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_43.png)
 
 Outlook .ost file
 
