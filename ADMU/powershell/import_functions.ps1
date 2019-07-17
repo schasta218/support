@@ -1,5 +1,4 @@
 #region Used Functions
-
 $Banner = @'
          __                          ______ __                   __
         / /__  __ ____ ___   ____   / ____// /____   __  __ ____/ /
@@ -26,9 +25,9 @@ function xamlform {
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="UserName" DisplayMemberBinding="{Binding 'UserName'}" Width="180"/>
-                    <GridViewColumn Header="Loaded" DisplayMemberBinding="{Binding 'Loaded'}" Width="50" />
-                    <GridViewColumn Header="Last Use Time" DisplayMemberBinding="{Binding 'LastUseTime'}" Width="140"/>
-                    <GridViewColumn Header="Roaming Configured" DisplayMemberBinding="{Binding 'RoamingConfigured'}" Width="120"/>
+                    <GridViewColumn Header="LastLogin" DisplayMemberBinding="{Binding 'LastLogin'}" Width="140"/>
+                    <GridViewColumn Header="CurrentlyActive" DisplayMemberBinding="{Binding 'Loaded'}" Width="100" />
+                    <GridViewColumn Header="DomainRoaming" DisplayMemberBinding="{Binding 'RoamingConfigured'}" Width="120"/>
                 </GridView>
             </ListView.View>
         </ListView>
@@ -152,12 +151,14 @@ function xamlform {
 
   Function Get-ProfileList {
     #get list of profiles from computer
-    #ORIGINAL $Profiles = Get-WmiObject -Class Win32_UserProfile -Property * | Where-Object {$_.Special -eq $false}| Sort-Object -property Loaded, LastUseTime -Descending | Select @{Name="UserName";Expression={$_.LocalPath.Replace('C:\Users\','')}}, Loaded, LastUseTime, RoamingPath
-    #$Profiles = Get-WmiObject -Class Win32_UserProfile -Property * | Where-Object {$_.Special -eq $false} | Select @{Name= "LastUseTime";EXPRESSION={$_.ConvertToDateTime($_.lastusetime)}}, @{Name= "UserName";Expression={$_.LocalPath}}, Loaded | Sort-Object -property Loaded, LastUseTime -Descending
-    $Profiles = Get-WmiObject -Class Win32_UserProfile -Property * | `
-      Where-Object {$_.Special -eq $false}| Sort-Object -property Loaded, LastUseTime -Descending | `
-      Select-Object @{Name = "UserName"; Expression = {$_.LocalPath.Replace('C:\Users\', '')}}, Loaded, @{Name = "Last Used Time"; EXPRESSION = {$_.ConvertToDateTime($_.lastusetime)}}, RoamingConfigured
-    $lvPorfileListOutput = $profiles | % {$lvProfileList.Items.Add($_)} #put the list of profiles in the profile box
+
+    #OLD
+    #$Profiles = Get-WmiObject -Class Win32_UserProfile -Property * | `
+    #Where-Object {$_.Special -eq $false}| Sort-Object -property Loaded, LastUseTime -Descending | `
+    #Select-Object @{Name = "UserName"; Expression = {$_.LocalPath.Replace('C:\Users\', '')}}, Loaded, @{Name = "Last Used Time"; EXPRESSION = {$_.ConvertToDateTime($_.lastusetime)}}, RoamingConfigured
+
+    $Profiles = Get-wmiobject -Class Win32_UserProfile -Property * | Where-Object {$_.Special -eq $false} | Add-Member -MemberType ScriptProperty -Name UserName -Value { (New-Object System.Security.Principal.SecurityIdentifier($this.Sid)).Translate([System.Security.Principal.NTAccount]).Value } -PassThru | Select-Object Username, RoamingConfigured, Loaded, @{Name = "LastLogin"; EXPRESSION = {$_.ConvertToDateTime($_.lastusetime)}}
+    $lvPorfileListOutput = $Profiles | % {$lvProfileList.Items.Add($_)} #put the list of profiles in the profile box
   }
 
   ##Form changes & interactions
@@ -219,7 +220,8 @@ function xamlform {
 
   #change button when profile selected
   $lvProfileList.Add_SelectionChanged( {
-      $script:DomainUserName = ($lvProfileList.SelectedItems.UserName)
+      $selectedusername = ($lvProfileList.SelectedItems.UserName)
+      $script:DomainUserName = $selectedusername.Substring($selectedusername.IndexOf('\') + 1)
       Validate-button
     })
 
@@ -236,19 +238,17 @@ function xamlform {
       Add-Member -InputObject:($FormResults) -MemberType:('NoteProperty') -Name:('TempPassword') -Value:($TempPassword)
       Add-Member -InputObject:($FormResults) -MemberType:('NoteProperty') -Name:('JumpCloudConnectKey') -Value:($JumpCloudConnectKey)
 
-      #Close form
+      #close form
       $Form.close()
-
-      & $PSScriptRoot\jcadmu.ps1 -inputobject $FormResults
-
-
+      $jcadmupath = "$PSScriptRoot\jcadmu.ps1"
+      $args = " -NonInteractive -File $jcadmupath -DomainUserName $DomainUsername -JumpCloudUserName $JumpCloudUserName -TempPassword $TempPassword -JumpCloudConnectKey $JumpCloudConnectKey -acceptEULA $acceptEULA"
+      Start-Process -FilePath:('PowerShell.exe') -ArgumentList:( $args ) -PassThru
     })
 
   #Load profilelist into listview
   Get-ProfileList
 
   $script:TempPassword = $tbTempPassword.Text
-
   $script:AcceptEULA = $true
   $script:tbTempPassword_valid = $true
 
@@ -343,7 +343,7 @@ function Write-Log {
 
     [Parameter(Mandatory = $false)]
     [Alias('LogPath')]
-    [string]$Path = 'C:\Windows\Temp\jcadmt.log',
+    [string]$Path = 'C:\Windows\Temp\jcadmu.log',
 
     [Parameter(Mandatory = $false)]
     [ValidateSet("Error", "Warn", "Info")]

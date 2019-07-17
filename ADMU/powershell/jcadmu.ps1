@@ -6,7 +6,7 @@ param (
   [Parameter(ParameterSetName = "cmd", Mandatory = $true, Position = 2, ValueFromPipelineByPropertyName = $true)][ValidateNotNullOrEmpty()][string]$TempPassword, # TODO Use SecureString datatype 
   [Parameter(ParameterSetName = "cmd", Mandatory = $true, Position = 3, ValueFromPipelineByPropertyName = $true)][ValidateNotNullOrEmpty()][ValidateLength(40, 40)][string]$JumpCloudConnectKey,
   #[Parameter(ParameterSetName="cmd",Mandatory = $true, Position = 4, ValueFromPipelineByPropertyName = $true)][ValidateNotNullOrEmpty()][ValidateLength(40, 40)][string]$JumpCloudApiKey, 
-  [Parameter(ParameterSetName = "cmd", Mandatory = $false, Position = 5, ValueFromPipelineByPropertyName = $true)][ValidateNotNullOrEmpty()][bool]$AcceptEULA = $false,
+  [Parameter(ParameterSetName = "cmd", Mandatory = $false, Position = 5, ValueFromPipelineByPropertyName = $true)][ValidateNotNullOrEmpty()][string]$AcceptEULA = $false,
   [parameter(ParameterSetName = "form")]
   [Object]$inputobject
 )
@@ -140,7 +140,7 @@ else {
 Write-Log -Message ('Starting scanstate tool on user ' + $netbiosname + '\' + $DomainUserName)
 
 try {
-  Write-Log -Message ('Scanstate Command: .\scanstate.exe c:\Windows\Temp\JCADMU\store /nocompress /i:miguser.xml /i:migapp.xml /l:c:\Windows\Temp\JCUSMT\store\scan.log /progress:c:\Windows\Temp\JCUSMT\store\scan_progress.log /o /ue:*\* /ui: $netbiosname /c' )
+  Write-Log -Message ('Scanstate Command: .\scanstate.exe c:\Windows\Temp\JCADMU\store /nocompress /i:miguser.xml /i:migapp.xml /l:c:\Windows\Temp\JCADMU\store\scan.log /progress:c:\Windows\Temp\JCADMU\store\scan_progress.log /o /ue:*\* /ui: $netbiosname /c' )
   Invoke-Command -Scriptblock {
     if ((Get-WmiObject Win32_OperatingSystem).OSArchitecture -eq '64-bit') {
       cd "C:\adk\Assessment and Deployment Kit\User State Migration Tool\amd64\"
@@ -148,6 +148,7 @@ try {
     else {
       cd "C:\adk\Assessment and Deployment Kit\User State Migration Tool\x86\"
     }
+    Write-Log -Message ('Scanstate tool is in progres')
     .\scanstate.exe c:\Windows\Temp\JCADMU\store /nocompress /i:miguser.xml /i:migapp.xml /l:c:\Windows\Temp\JCADMU\store\scan.log /progress:c:\Windows\Temp\JCADMU\store\scan_progress.log /o /ue:*\* /ui:$netbiosname\$DomainUserName /c
   } -ArgumentList {$netbiosname, $DomainUserName}
 }
