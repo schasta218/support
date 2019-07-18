@@ -2,10 +2,10 @@
 param (
 
   [parameter (ParameterSetName = "cmd", Mandatory = $true, Position = 0, ValueFromPipelineByPropertyName = $true)][ValidateNotNullOrEmpty()][string]$DomainUserName,
-  [Parameter(ParameterSetName = "cmd", Mandatory = $true, Position = 1, ValueFromPipelineByPropertyName = $true)][ValidateNotNullOrEmpty()][string]$JumpCloudUserName, 
-  [Parameter(ParameterSetName = "cmd", Mandatory = $true, Position = 2, ValueFromPipelineByPropertyName = $true)][ValidateNotNullOrEmpty()][string]$TempPassword, # TODO Use SecureString datatype 
+  [Parameter(ParameterSetName = "cmd", Mandatory = $true, Position = 1, ValueFromPipelineByPropertyName = $true)][ValidateNotNullOrEmpty()][string]$JumpCloudUserName,
+  [Parameter(ParameterSetName = "cmd", Mandatory = $true, Position = 2, ValueFromPipelineByPropertyName = $true)][ValidateNotNullOrEmpty()][string]$TempPassword, #TODO Use SecureString datatype
   [Parameter(ParameterSetName = "cmd", Mandatory = $true, Position = 3, ValueFromPipelineByPropertyName = $true)][ValidateNotNullOrEmpty()][ValidateLength(40, 40)][string]$JumpCloudConnectKey,
-  #[Parameter(ParameterSetName="cmd",Mandatory = $true, Position = 4, ValueFromPipelineByPropertyName = $true)][ValidateNotNullOrEmpty()][ValidateLength(40, 40)][string]$JumpCloudApiKey, 
+  #[Parameter(ParameterSetName="cmd",Mandatory = $true, Position = 4, ValueFromPipelineByPropertyName = $true)][ValidateNotNullOrEmpty()][ValidateLength(40, 40)][string]$JumpCloudApiKey,
   [Parameter(ParameterSetName = "cmd", Mandatory = $false, Position = 5, ValueFromPipelineByPropertyName = $true)][ValidateNotNullOrEmpty()][string]$AcceptEULA = $false,
   [parameter(ParameterSetName = "form")]
   [Object]$inputobject
@@ -17,8 +17,7 @@ $scriptPath = Split-Path $Invocation.MyCommand.Path
 . $scriptPath'\import_functions.ps1'
 
 if ($PSCmdlet.ParameterSetName -eq "form") {
-  #load gui vars
-
+  #Load GUI Vars
   $DomainUserName = $inputobject.DomainUserName
   $JumpCloudUserName = $inputobject.JumpCloudUserName
   $TempPassword = $inputobject.TempPassword
@@ -41,7 +40,7 @@ $msvc2013x64file = 'vc_redist.x64.exe'
 $msvc2013x86file = 'vc_redist.x86.exe'
 $msvc2013x86link = 'http://download.microsoft.com/download/0/5/6/056dcda9-d667-4e27-8001-8a0c6971d6b1/vcredist_x86.exe'
 $msvc2013x64link = 'http://download.microsoft.com/download/0/5/6/056dcda9-d667-4e27-8001-8a0c6971d6b1/vcredist_x64.exe'
-$msvc2013x86install = "$msvc2013path$msvc2013x86file" + " /install /quiet /norestart" 
+$msvc2013x86install = "$msvc2013path$msvc2013x86file" + " /install /quiet /norestart"
 $msvc2013x64install = "$msvc2013path$msvc2013x64file" + " /install /quiet /norestart"
 
 
@@ -77,11 +76,10 @@ else {
 
 #Banner Herestring
 Write-Host $Banner -ForegroundColor Green
-
 Write-Log -Message ('Windows Profile ' + $domainname + '\' + $DomainUserName + ' going to be converted to ' + $localcomputername + '\' + $JumpCloudUserName)
 Write-Log -Message ('Starting')
 
-#cleanup folders first
+#Cleanup Folders First
 Write-Log -Message ('Removing Temp Files & Folders')
 try {
   Remove-ItemSafely -Path 'c:\windows\temp\JCADMU\' -Recurse
@@ -92,11 +90,10 @@ catch {
 
 
 
-#USMT install & EULA check
+#USMT Install & EULA Check
 if ((-not (Get-WmiObject -Class Win32_Product | Where-Object -FilterScript {$_.Name -like "User State Migration Tool*"})) -And (-not (Test-Path 'C:\adk\Assessment and Deployment Kit\User State Migration Tool\'))) {
   #DOWNLOAD ADK IF NEEDED
-
-  #recreate blank JCADMU folder
+  #Recreate Blank JCADMU Folder
   New-Item -ItemType directory -Path 'C:\Windows\Temp\JCADMU\'
 
   #Download WindowsADK
@@ -140,7 +137,7 @@ else {
 Write-Log -Message ('Starting scanstate tool on user ' + $netbiosname + '\' + $DomainUserName)
 
 try {
-  Write-Log -Message ('Scanstate Command: .\scanstate.exe c:\Windows\Temp\JCADMU\store /nocompress /i:miguser.xml /i:migapp.xml /l:c:\Windows\Temp\JCADMU\store\scan.log /progress:c:\Windows\Temp\JCADMU\store\scan_progress.log /o /ue:*\* /ui: $netbiosname /c' )
+  Write-Log -Message ('Scanstate Command: .\scanstate.exe c:\Windows\Temp\JCADMU\store /nocompress /i:miguser.xml /i:migapp.xml /l:c:\Windows\Temp\JCADMU\store\scan.log /progress:c:\Windows\Temp\JCADMU\store\scan_progress.log /o /ue:*\* /ui:'+ $netbiosname + ' /c' )
   Invoke-Command -Scriptblock {
     if ((Get-WmiObject Win32_OperatingSystem).OSArchitecture -eq '64-bit') {
       cd "C:\adk\Assessment and Deployment Kit\User State Migration Tool\amd64\"
