@@ -208,7 +208,7 @@ $lvProfileList.Add_SelectionChanged( {
   })
 
 #AcceptEULA moreinfo link - Mouse button event
-$lbMoreInfo.Add_PreviewMouseDown( {[system.Diagnostics.Process]::start('https://github.com/TheJumpCloud/support/wiki')})
+$lbMoreInfo.Add_PreviewMouseDown( {[system.Diagnostics.Process]::start('https://github.com/TheJumpCloud/support/tree/BS-ADMU-version_1.0.0/ADMU#EULA--Legal-Explanation')})
 
 $bDeleteProfile.Add_Click( {
 
