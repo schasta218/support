@@ -1,3 +1,6 @@
+$Invocation = (Get-Variable MyInvocation -Scope 0).Value
+$scriptPath = Split-Path $Invocation.MyCommand.Path
+
 #region Used Functions
 $Banner = @'
          __                          ______ __                   __
@@ -214,19 +217,39 @@ function xamlform {
 
   #change button when profile selected
   $lvProfileList.Add_SelectionChanged( {
-      $selectedusername = ($lvProfileList.SelectedItems.UserName)
+      $selectedusername = ($lvProfileList.SelectedItem.username)
       $script:DomainUserName = $selectedusername.Substring($selectedusername.IndexOf('\') + 1)
-      Validate-button
+      write-host $DomainUserName
+      #Validate-button
     })
 
   #AcceptEULA moreinfo link - Mouse button event
   $lbMoreInfo.Add_PreviewMouseDown( {[system.Diagnostics.Process]::start('https://github.com/TheJumpCloud/support/wiki')})
 
   $bDeleteProfile.Add_Click( {
+      
+      #ORIGINAL
+
+      #build and return object
+      #$script:FormResults = [PSCustomObject]@{}
+      #Add-Member -InputObject:($FormResults) -MemberType:('NoteProperty') -Name:('AcceptEula') -Value:($AcceptEula)
+      #Add-Member -InputObject:($FormResults) -MemberType:('NoteProperty') -Name:('DomainUserName') -Value:($DomainUserName)
+      #Add-Member -InputObject:($FormResults) -MemberType:('NoteProperty') -Name:('JumpCloudUserName') -Value:($JumpCloudUserName)
+      #Add-Member -InputObject:($FormResults) -MemberType:('NoteProperty') -Name:('TempPassword') -Value:($TempPassword)
+      #Add-Member -InputObject:($FormResults) -MemberType:('NoteProperty') -Name:('JumpCloudConnectKey') -Value:($JumpCloudConnectKey)
+
+      #Close form
+      #$Form.close()
+      #& C:\Users\Administrator\Desktop\powershell\jcadmu.ps1 -inputobject $FormResults 
+      
+  
+      
+      
+      #NEW1
       #close form
       $Form.close()
-      $jcadmupath = "$PSScriptRoot\jcadmu.ps1"
-      $args = "-noexit -File $jcadmupath -DomainUserName $DomainUsername -JumpCloudUserName $JumpCloudUserName -TempPassword $TempPassword -JumpCloudConnectKey $JumpCloudConnectKey -acceptEULA $acceptEULA"
+      $jcadmupath = $scriptPath + '\jcadmu.ps1'
+      $args = " -sta -noexit -File $jcadmupath -DomainUserName $DomainUsername -JumpCloudUserName $JumpCloudUserName -TempPassword $TempPassword -JumpCloudConnectKey $JumpCloudConnectKey -acceptEULA $acceptEULA"
       Start-Process -FilePath:('PowerShell.exe') -ArgumentList:( $args ) -PassThru
     })
 
