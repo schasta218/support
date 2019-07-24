@@ -12,7 +12,7 @@
     - [Azure AD Registration](#Azure-AD-Registration)
     - [Hybrid Azure AD Join](#Hybrid-Azure-AD-Join)
 - [What Is In A Profile?](#What-Is-In-A-Profile)
-- [Running the ADMU Tool:](#Running-the-ADMU-Tool)
+- [Running the JCADMU Tool:](#Running-the-JCADMU-Tool)
   - [GUI](#GUI)
   - [Powershell](#Powershell)
   - [EXE](#EXE)
@@ -21,6 +21,7 @@
   - [Requirements](#Requirements)
   - [EULA & Legal Explanation](#EULA--Legal-Explanation)
   - [Error logging & troubleshooting](#Error-logging--troubleshooting)
+    - [Log Levels:](#Log-Levels)
   - [Advanced Deployment Scenarios](#Advanced-Deployment-Scenarios)
   - [Protected content migration dialogue explanation](#Protected-content-migration-dialogue-explanation)
   - [Example Scenario](#Example-Scenario)
@@ -72,7 +73,7 @@
 
 > * Downloaded upon first logon & requires connection to server
 > * Stored and redirects to file share
-> * Syncs changes to file share when accessible 
+> * Syncs changes to file share when accessible
 > * Merged with local profile to allow offline ‘cached version’
 > * Dissociated/unusable when system is unbound from domain
 
@@ -103,6 +104,10 @@
 >
 > The ADMU v1.0.0 tool can not currently convert this account to a ‘local profile’. However this functionality will be added in the future to allow administrators a way to convert ‘Azure Ad Joined’ systems and accounts to migrate to JumpCloud.
 
+```diff
+- Azure AD Join is not currently supported with JumpCloud takeover.
+```
+
 ![image0](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_0.png)
 
 
@@ -126,6 +131,10 @@
 
 > It is also possible to ‘Hybrid Azure AD Join’ a system. This is when a system is both domain bound and azure ad joined to get the best of both scenarios. It also allows non windows 10 systems to be managed within ‘Azure Ad’ however it is more limited than the other windows 10 options. It does not impact or create any local profiles and JumpCloud can run alongside this scenario. However further thought would need to go into an ideal password reset flow and if azure ad paid tier is required for password writeback etc depending on the scenario and requirements.
 
+```diff
+- Hybrid Azure AD Join is not supported with JumpCloud takeover.
+```
+
 # What Is In A Profile?
 
 
@@ -135,15 +144,14 @@
 >
 > * App data folder contains data and settings related to applications. Each windows user/profile has its own broken down into roaming and local. If a system is domain joined certain settings can roam across the domain vs local will only be specific to that user on that system.
 
-# Running the ADMU Tool:
+# Running the JCADMU Tool:
 
 ## GUI
 > This is a Powershell launched GUI that utilizes WPF to collect input parameters to pass to the JCADMU powershell code.
-> 
+>
 > If the GUI is ran and the system is not domain joined the utility will not let the user continue with the process. The only option is to quit the application
 
 ![image7](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_7.png)
-
 
 
 ## Powershell
@@ -230,7 +238,7 @@ Windows 10
 
 
 
-> To get around this currently we have a .net3.5 and .net4 versions of both jcadmu.exe & jcadmu_gui.exe
+> To get around this currently we have a .net3.5 and .net4+ versions of both jcadmu.exe & form_jcadmu.exe
 >
 > This will be addressed in the future and ideally there will be a single .exe for all systems and requirements will be handled behind the scenes.
 
@@ -238,9 +246,9 @@ Windows 10
 ## Requirements
 > The ADMU tool v1.0.0 assumes and requires the following to work
 >
-> * System should be currently Domain bound (The system does NOT have to be connected or currently connected to a Domain Controller).
-> * A domain based profile should exist on the system to convert
-> * Once the user account is converted the JumpCloud agent will be installed and the system bound to the JumpCloud instance
+> * System should be currently Domain bound (The system does NOT have to be actively connected to a Domain Controller).
+> * A domain based profile should exist on the system to convert e.g JCADB2\bob.lazar
+> * Once the user account is converted the JumpCloud agent will be installed and the system bound to the JumpCloud instance.
 
 
 
@@ -252,14 +260,25 @@ TODO..
 
 ## Error logging & troubleshooting
 
-```
-TODO..
-```
-> * Logging levels
-> * example errors
-> * troubleshooting scenarios
 
+> The JCADMU tool creates a log file in:
+c:\windows\temp\jcadmu.log
+>
+### Log Levels:
 
+> * Information - Tells what is going on
+```
+2019-07-23 09:01:38 INFO: Download of Windows ADK Setup file completed successfully
+```
+> * Warning - A non script terminating error
+```
+2019-07-23 09:03:52 WARNING: Removal Of Temp Files & Folders Failed
+```
+
+> * Error - A script terminating error
+```
+2019-07-23 08:56:38 ERROR: System is NOT joined to a domain.
+```
 
 ## Advanced Deployment Scenarios
 ```
