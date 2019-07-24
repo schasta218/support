@@ -210,38 +210,29 @@ c:\jcadmu.exe -arguments bob.lazar blazar Temp123! CONNECTKEY
 
 ## Supported O/S Versions
 
-Windows 7
+- Windows 7
 
-Windows 8.1
+- Windows 8.1
 
-Windows 10
-
-
-> Currently both the GUI and EXE implementations require a specific .net version to work.
+- Windows 10
 
 
-
-> Windows 7 ships with .net 3.5.1 by default
-
-![image4](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_4.png)
-
-
-
-> Windows 8.1 ships with .net 4.5 and .net 3.5 not enabled by default
-
-![image5](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_5.png)
-
-
-
-> Windows 10 ships with .net 4.7 and .net 3.5 not enabled by default
-
-![image6](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_6.png)
-
-
-
-> To get around this currently we have a .net3.5 and .net4+ versions of both jcadmu.exe & form_jcadmu.exe
+> Currently both the GUI and EXE implementations require a specific .net version to load or run with no user interaction.
 >
-> This will be addressed in the future and ideally there will be a single .exe for all systems and requirements will be handled behind the scenes.
+> To account for this currently we have a .net3.5 and .net4+ versions of both jcadmu.exe & form_jcadmu.exe
+> - Windows 7 ships with .net 3.5.1 by default
+>
+> - Windows 8.1 ships with .net 4.5 and .net 3.5 not enabled by default
+>
+> - Windows 10 ships with .net 4.7 and .net 3.5 not enabled by default
+>
+
+
+
+>The idea is to run the .net3.5 version on base win7 systems and .net4+ on 8.1/10 systems.
+>If for example the .net4+ version is run on win7 system the user would see the following.
+
+![image46](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_46.png)
 
 
 ## Requirements
