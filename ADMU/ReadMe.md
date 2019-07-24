@@ -20,8 +20,9 @@
   - [Supported O/S Versions](#Supported-OS-Versions)
   - [Requirements](#Requirements)
   - [EULA & Legal Explanation](#EULA--Legal-Explanation)
-  - [Error logging & troubleshooting](#Error-logging--troubleshooting)
-    - [Log Levels:](#Log-Levels)
+  - [Error Logging & Troubleshooting Errors](#Error-Logging--Troubleshooting-Errors)
+    - [Log Levels](#Log-Levels)
+    - [Troubleshooting errors](#Troubleshooting-errors)
   - [Advanced Deployment Scenarios](#Advanced-Deployment-Scenarios)
   - [Protected content migration dialogue explanation](#Protected-content-migration-dialogue-explanation)
   - [Example Scenario](#Example-Scenario)
@@ -258,13 +259,13 @@ Windows 10
 TODO..
 ```
 
-## Error logging & troubleshooting
+## Error Logging & Troubleshooting Errors
 
 
 > The JCADMU tool creates a log file in:
 c:\windows\temp\jcadmu.log
 >
-### Log Levels:
+### Log Levels
 
 > * Information - Tells what is going on
 ```
@@ -279,6 +280,59 @@ c:\windows\temp\jcadmu.log
 ```
 2019-07-23 08:56:38 ERROR: System is NOT joined to a domain.
 ```
+### Troubleshooting errors
+
+> The JCADMU.log file can help troubleshoot possible issues with the tool and why it didn't complete. Below are some examples
+
+```
+ERROR: System is NOT joined to a domain.
+```
+>The system is not bound to a domain, currently the tool requires this to convert domain accounts-->local accounts.
+
+```
+ERROR: Microsoft Windows ADK - User State Migration Tool not found in c:\adk. Make sure it is installed correctly and in the required location.
+```
+>The Microsoft Windows ADK must be installed in c:\adk. If it is previously installed in another directory the script will fail. In the future this will be changed to account for the default installer path in 'C:\Program Files (x86)\Windows Kits\10\Assessment and Deployment Kit'. To resolve this you would have to uninstall the ADK and either reinstall or let the script install in c:\adk.
+
+```
+ERROR: Failed To Download Windows ADK Setup
+```
+> If the download step fails to download the file to the directory the script will fail. This could be due to internet connectivity or other connection issues.
+
+```
+ERROR: Failed to complete scanstate tool
+```
+> the log will show the 'scanstate' command that is being run on the system, if it fails to complete the script will error out. The preceeding INFO log entry can help with troubleshooting and verifying if the command is correct. It is also possible the disk does not have sufficient space to complete the scanstate command.
+```
+INFO: Starting scanstate tool on user jcadb2\bob.lazar
+```
+```
+INFO: Scanstate Command: .\scanstate.exe c:\Windows\Temp\JCADMU\store /nocompress /i:miguser.xml /i:migapp.xml /l:c:\Windows\Temp\JCADMU\store\scan.log /progress:c:\Windows\Temp\JCADMU\store\scan_progress.log /o /ue:*\* /ui: $netbiosname /c
+```
+```
+ERROR: Failed to complete loadstate tool
+```
+> This is similar to the scanstate error but for the loadstate tool, if it fails to complete the script will error out. This could be due to issues with the scanstate step and a corrupted store state in c:\Windows\Temp\JCADMU\store\
+
+```
+ERROR: Failed To add new user ' + $JumpCloudUserName + ' to Users group
+```
+> If the script fails to add the newly created user to the 'users' group on the system it will error out. This could be due to the fact the account doesn't exist or a duplicate or incorrect account name was used etc.
+
+```
+ERROR: Jumpcloud agent installation failed
+```
+> The Jumpcloud agent could error due to the agents prerequisites failing to install (C++ runtimes) or due to the installer being passed an incorrect connect key. If either of these steps fail it will error out.
+
+```
+ERROR: Unable to leave domain, Jumpcloud agent will not start until resolved'
+```
+> The final step is for the system to leave the domain and remove the active directory bind of the system. This utilizes a WMI call to leave the domain from the client side. If this fails it will error out. If the domain bind still exists the workstation will not be able to start the JumpCloud agent.
+
+```
+WARNING: Removal Of Temp Files & Folders Failed
+```
+> The script attempts at various stages to clear and recursivly delete files to leave the system in a clean state. If any of the files in use are locked, this step will output a warning. This would indicate the files may still be on the system and should be manually cleared if required.
 
 ## Advanced Deployment Scenarios
 ```
