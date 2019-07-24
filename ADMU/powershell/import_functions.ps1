@@ -81,7 +81,7 @@ function xamlform {
   # Store Form Objects In PowerShell
   #===========================================================================
 
-  $xaml.SelectNodes("//*[@Name]") | % {Set-Variable -Name ($_.Name) -Value $Form.FindName($_.Name)}
+  $xaml.SelectNodes("//*[@Name]") | ForEach-Object {Set-Variable -Name ($_.Name) -Value $Form.FindName($_.Name)}
 
   ##set labels and vars on load
 
