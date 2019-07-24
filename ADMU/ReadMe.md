@@ -182,7 +182,18 @@
 
 
 ## EXE
-> The Powershell code has also been packaged as an exe for various deployment scenarios.
+>The Powershell code has also been packaged as an exe for various deployment scenarios.
+>
+>The .exe verison of the JCADMU is really just a wrapper and runs the same powershell code.
+>
+> The exe can be run interactively and the parameters entered or via the command line using the -arguments option
+
+```powershell
+c:\jcadmu.exe -arguments bob.lazar blazar Temp123! CONNECTKEY
+```
+![image44](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_44.png)
+
+![image45](https://github.com/TheJumpCloud/support/blob/BS-ADMU-version_1.0.0/ADMU/images/img_45.png)
 
 
 
