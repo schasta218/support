@@ -130,7 +130,7 @@
 
 ### Hybrid Azure AD Join
 
-> It is also possible to ‘Hybrid Azure AD Join’ a system. This is when a system is both domain bound and azure ad joined to get the best of both scenarios. It also allows non windows 10 systems to be managed within ‘Azure Ad’ however it is more limited than the other windows 10 options. It does not impact or create any local profiles and JumpCloud can run alongside this scenario. However further thought would need to go into an ideal password reset flow and if azure ad paid tier is required for password writeback etc depending on the scenario and requirements.
+> It is also possible to ‘Hybrid Azure AD Join’ a system. This is when a system is both domain bound and azure ad joined to get the best of both scenarios. It also allows non windows 10 systems to be managed within ‘Azure Ad’ however it is more limited than the other windows 10 options. It does not impact or create any local profiles and JumpCloud can run alongside this scenario. In this scenario be advised that end user education may be required to ensure users follow a password reset workflow that updates both Azure AD and JumpCloud.
 
 ```diff
 - Hybrid Azure AD Join is not supported with JumpCloud takeover.
@@ -586,7 +586,7 @@ LOG: 'Starting loadstate tool on user ' $netbiosname + '\' + $DomainUserName + '
 > Windows default apps
 
 
-> After converting the account, outlooks .ost offline cache file must be recreated and the account re-logged into. However the office activation and association should still be present
+> After converting the account, outlooks .ost offline cache file must be recreated and the account re-logged into. However the office activation and association should still be present.
 
 
 [https://blogs.technet.microsoft.com/askds/2010/02/11/usmt-ost-and-pst/](https://blogs.technet.microsoft.com/askds/2010/02/11/usmt-ost-and-pst/)
