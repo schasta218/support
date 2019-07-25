@@ -2,10 +2,10 @@
 param (
 
   [parameter(ParameterSetName = "cmd", Mandatory = $true, Position = 0, ValueFromPipelineByPropertyName = $true)][ValidateNotNullOrEmpty()][string]$DomainUserName,
-  [Parameter(ParameterSetName = "cmd", Mandatory = $true, Position = 1, ValueFromPipelineByPropertyName = $true)][ValidateNotNullOrEmpty()][string]$JumpCloudUserName, 
-  [Parameter(ParameterSetName = "cmd", Mandatory = $true, Position = 2, ValueFromPipelineByPropertyName = $true)][ValidateNotNullOrEmpty()][string]$TempPassword, # TODO Use SecureString datatype 
+  [Parameter(ParameterSetName = "cmd", Mandatory = $true, Position = 1, ValueFromPipelineByPropertyName = $true)][ValidateNotNullOrEmpty()][string]$JumpCloudUserName,
+  [Parameter(ParameterSetName = "cmd", Mandatory = $true, Position = 2, ValueFromPipelineByPropertyName = $true)][ValidateNotNullOrEmpty()][string]$TempPassword, # TODO Use SecureString datatype
   [Parameter(ParameterSetName = "cmd", Mandatory = $true, Position = 3, ValueFromPipelineByPropertyName = $true)][ValidateNotNullOrEmpty()][ValidateLength(40, 40)][string]$JumpCloudConnectKey,
-  #[Parameter(ParameterSetName="cmd",Mandatory = $true, Position = 4, ValueFromPipelineByPropertyName = $true)][ValidateNotNullOrEmpty()][ValidateLength(40, 40)][string]$JumpCloudApiKey, 
+  #[Parameter(ParameterSetName="cmd",Mandatory = $true, Position = 4, ValueFromPipelineByPropertyName = $true)][ValidateNotNullOrEmpty()][ValidateLength(40, 40)][string]$JumpCloudApiKey,
   [Parameter(ParameterSetName = "cmd", Mandatory = $false, Position = 5, ValueFromPipelineByPropertyName = $true)][ValidateNotNullOrEmpty()][string]$AcceptEULA = $false,
   [parameter(ParameterSetName = "form")]
   [Object]$inputobject
@@ -41,11 +41,10 @@ $msvc2013x64file = 'vc_redist.x64.exe'
 $msvc2013x86file = 'vc_redist.x86.exe'
 $msvc2013x86link = 'http://download.microsoft.com/download/0/5/6/056dcda9-d667-4e27-8001-8a0c6971d6b1/vcredist_x86.exe'
 $msvc2013x64link = 'http://download.microsoft.com/download/0/5/6/056dcda9-d667-4e27-8001-8a0c6971d6b1/vcredist_x64.exe'
-$msvc2013x86install = "$msvc2013path$msvc2013x86file" + " /install /quiet /norestart" 
+$msvc2013x86install = "$msvc2013path$msvc2013x86file" + " /install /quiet /norestart"
 $msvc2013x64install = "$msvc2013path$msvc2013x64file" + " /install /quiet /norestart"
 
-
-#check domain join status
+#Check Domain Join Status
 if ((gwmi win32_computersystem).partofdomain -eq $true) {
   Write-Log -Message ($localcomputername + ' is currently Domain joined to ' + $domainname)
 }
@@ -75,13 +74,12 @@ else {
 #   Write-Log -Message ($DomainUserName + ' is not being verified against the domain.')
 # }
 
-#Banner Herestring
+#Start Of Console Output
 Write-Host $Banner -ForegroundColor Green
-
 Write-Log -Message ('Windows Profile ' + $domainname + '\' + $DomainUserName + ' going to be converted to ' + $localcomputername + '\' + $JumpCloudUserName)
 Write-Log -Message ('Starting')
 
-#cleanup folders first
+#Cleanup Folders First
 Write-Log -Message ('Removing Temp Files & Folders')
 try {
   Remove-ItemSafely -Path 'c:\windows\temp\JCADMU\' -Recurse
@@ -90,17 +88,16 @@ catch {
   Write-Log -Message ('Removal Of Temp Files & Folders Failed') -Level Warn
 }
 
-#USMT install & EULA check
+#USMT Install & EULA Check
 if ((-not (Get-WmiObject -Class Win32_Product | Where-Object -FilterScript {$_.Name -like "User State Migration Tool*"})) -And (-not (Test-Path 'C:\adk\Assessment and Deployment Kit\User State Migration Tool\'))) {
-  #DOWNLOAD ADK IF NEEDED
 
-  #Recreate blank JCADMU folder
+  #Recreate Blank JCADMU folder
   New-Item -ItemType directory -Path 'C:\Windows\Temp\JCADMU\'
 
   #Download WindowsADK
   DownloadLink -Link $adksetuplink -Path ($adksetuppath + $adksetupfile)
 
-  #Test path
+  #Test Path
   if (Test-Path $adksetuppath) {
     Write-Log -Message 'Download of Windows ADK Setup file completed successfully'
   }
@@ -109,7 +106,7 @@ if ((-not (Get-WmiObject -Class Win32_Product | Where-Object -FilterScript {$_.N
     exit
   }
 
-  #not installed and not in right dir
+  #Not Installed & Not In Right Dir
   if ($AcceptEULA -eq $false) {
     Write-Log -Message 'Installing Windows ADK at c:\adk\ please complete GUI prompts & accept EULA within 5mins or it will exit.'
     start-newprocess -pfile 'C:\Windows\Temp\JCADMU\adksetup.exe' -arguments '/installpath c:\adk /features OptionId.UserStateMigrationTool'
@@ -118,9 +115,8 @@ if ((-not (Get-WmiObject -Class Win32_Product | Where-Object -FilterScript {$_.N
     Write-Log -Message 'Installing Windows ADK at c:\adk\ silently. By using "$AcceptEULA = "true" you are accepting the "Microsoft Windows ADK EULA". This process could take up to 3mins if .net is required to be installed, it will timeout if it takes longer than 5mins.'
     start-newprocess -pfile 'C:\Windows\Temp\JCADMU\adksetup.exe' -arguments '/quiet /installpath c:\adk /features OptionId.UserStateMigrationTool'
   }
-}
-elseif ((Get-WmiObject -Class Win32_Product | Where-Object -FilterScript {$_.Name -like "User State Migration Tool*"}) -And (-not (Test-Path 'C:\adk\Assessment and Deployment Kit\User State Migration Tool\'))) {
-  #installed but not in the right dir
+} elseif ((Get-WmiObject -Class Win32_Product | Where-Object -FilterScript {$_.Name -like "User State Migration Tool*"}) -And (-not (Test-Path 'C:\adk\Assessment and Deployment Kit\User State Migration Tool\'))) {
+  #Installed But Not In Right Dir
   Write-Log -Message ('Microsoft Windows ADK is installed but USMT cant be found in c:\adk\... directory - Please correct and try again.') -Level Error
   exit
 }
@@ -134,7 +130,7 @@ else {
   exit
 }
 
-#scanstate
+#Scanstate Step
 Write-Log -Message ('Starting scanstate tool on user ' + $netbiosname + '\' + $DomainUserName)
 
 try {
@@ -158,7 +154,7 @@ Write-Log -Message ('Scanstate tool completed on user ' + $netbiosname + '\' + $
 
 Write-Log -Message ('Starting loadstate tool on user ' + $netbiosname + '\' + $DomainUserName + ' converting to ' + $localcomputername + '\' + $JumpCloudUserName)
 
-#loadstate
+#Loadstate Step
 try {
   Write-Log -Message ('Loadstate Command:.\loadstate.exe c:\Windows\Temp\JCADMU\store /i:miguser.xml /i:migapp.xml /nocompress /l:c:\Windows\Temp\JCADMU\store\load.log /progress:c:\Windows\Temp\JCADMU\store\load_progress.log /ue:*\* /ui:' + $netbiosname + '\' + $DomainUserName + '/lac:$TEMPPASSWORD /lae /c /mu:' + $netbiosname + '`\' + $DomainUserName + '`:' + $localcomputername + '\' + $JumpCloudUserName)
   Invoke-Command -Scriptblock {
@@ -177,7 +173,7 @@ catch {
   exit 1
 }
 
-#add user to Users Group for login
+#Add User To Users Group For Login
 Write-Log -Message ('Adding new user ' + $JumpCloudUserName + ' to Users group')
 try {
   Add-LocalUser -computer $localcomputername -group 'Users' -localusername $JumpCloudUserName
@@ -187,8 +183,7 @@ catch {
   exit
 }
 
-# Silent JumpCloud Agent Installation Script
-#region agentinstall
+#region silentagentinstall
 
 # JumpCloud Agent Installation Variables
 $AGENT_PATH = "${env:ProgramFiles}\JumpCloud"
@@ -202,22 +197,6 @@ $EVENT_LOGGER_KEY_NAME = "hklm:\SYSTEM\CurrentControlSet\services\eventlog\Appli
 $INSTALLER_BINARY_NAMES = "JumpCloudInstaller.exe,JumpCloudInstaller.tmp"
 
 # Agent Install Helper Functions
-Function AgentIsInstalled() {
-  $inServiceMgr = AgentIsInServiceManager
-  $onFileSystem = AgentIsOnFileSystem
-  $inServiceMgr -Or $onFileSystem
-}
-
-Function AgentIsInServiceManager() {
-  try {
-    $services = Get-Service -Name "${AGENT_SERVICE_NAME}" -ErrorAction Stop
-    $true
-  }
-  catch {
-    $false
-  }
-}
-
 Function AgentIsOnFileSystem() {
   Test-Path ${AGENT_PATH}/${AGENT_BINARY_NAME}
 }
@@ -231,78 +210,8 @@ Function InstallAgent() {
   Invoke-Expression "$params"
 }
 
-Function AgentIsInstalled() {
-  $inServiceMgr = AgentIsInServiceManager
-  $onFileSystem = AgentIsOnFileSystem
-
-  $inServiceMgr -Or $onFileSystem
-}
-
 Function DownloadAgentInstaller() {
   (New-Object System.Net.WebClient).DownloadFile("${AGENT_INSTALLER_URL}", "${AGENT_INSTALLER_PATH}")
-}
-
-# JumpCloud Agent Install
-Function DownloadAndInstallAgent() {
-  if (!(Check_Program_Installed("Microsoft Visual C++ 2013 x64")) -OR (!(Check_Program_Installed("Microsoft Visual C++ 2013 x86")))) {
-    Write-Log -Message 'Downloading & Installing JCAgent prereq'
-    DownloadLink -Link $msvc2013x64link -Path ($msvc2013path + $msvc2013x64file)
-    DownloadLink -Link $msvc2013x86link -Path ($msvc2013path + $msvc2013x86file)
-    "$msvc2013x86install" | cmd
-    "$msvc2013x64install" | cmd
-    Start-Sleep -s 10
-    Write-Log -Message 'JCAgent prereq installed'
-  }
-  $agentIsInstalled = AgentIsInstalled
-  if (-Not $agentIsInstalled) {
-    Write-Log -Message 'Downloading agent installer'
-
-    DownloadAgentInstaller
-
-    if (AgentInstallerExists) {
-      Write-Log -Message 'Jumpcloud Agent Download Complete'
-      Write-Log -Message 'Installing Jumpcloud Agent'
-      InstallAgent
-      Start-Sleep -s 5
-
-      $ConfirmInstall = AgentIsInServiceManager
-
-      [int]$ConfirmInstallCounter = 0
-
-      while ($ConfirmInstall -ne $true) {
-        Start-Sleep -s 2
-        $ConfirmInstall = AgentIsInServiceManager
-        $ConfirmInstallCounter ++
-
-        if ($ConfirmInstallCounter -eq 30) {
-
-          Write-Log -Message ('Jumpcloud agent installation failed') -Level Error
-          exit 1
-        }
-      }
-
-      $exitCode = $?
-      $agentIsInstalled = AgentIsInstalled
-
-      Write-Log -Message 'Jumpcloud agent installation completed.'
-
-      if ($exitCode -ne $true) {
-        Write-Log -Message ('Agent installation failed. Please rerun this script, and if that doesnt work, please reboot and try again. If neither work, please contact support@jumpcloud.com') -Level Error
-        exit 1
-      }
-      else {
-        Write-Log -Message '* * * SUCCESS! Agent installation complete.* * *'
-        Start-Sleep -s 2
-      }
-    }
-    else {
-      Write-Log -Message ('Could not download agent installer from ${AGENT_INSTALLER_URL}. Install FAILED.') -Level Error
-      exit 1
-    }
-  }
-  else {
-    Write-Log -Message ('Agent is already installed, not installing again.')
-  }
 }
 
 Function ForceRebootComputerWithDelay {
@@ -333,9 +242,53 @@ Function ForceRebootComputerWithDelay {
   }
 }
 
-DownloadAndInstallAgent
+Function DownloadAndInstallAgent() {
+  if (!(Check_Program_Installed("Microsoft Visual C++ 2013 x64")) -OR (!(Check_Program_Installed("Microsoft Visual C++ 2013 x86")))) {
+    Write-Log -Message 'Downloading & Installing JCAgent prereq'
+    DownloadLink -Link $msvc2013x64link -Path ($msvc2013path + $msvc2013x64file)
+    DownloadLink -Link $msvc2013x86link -Path ($msvc2013path + $msvc2013x86file)
+    Write-Log -Message 'Jumpcloud Agent Download Complete'
+    "$msvc2013x86install" | cmd
+    "$msvc2013x64install" | cmd
+    Write-Log -Message 'JCAgent prereq installed'
+  }
+  elseif ((Check_Program_Installed("Microsoft Visual C++ 2013 x64")) -and ((Check_Program_Installed("Microsoft Visual C++ 2013 x86"))) -and !(AgentIsOnFileSystem)) {
 
-#leave domain
+    Write-Log -Message 'Downloading JCAgent Installer'
+    #Download Installer
+    DownloadAgentInstaller
+
+    Write-Log -Message 'Running JCAgent Installer'
+    #Run Installer
+    InstallAgent
+
+  }
+  elseif ((Check_Program_Installed("Microsoft Visual C++ 2013 x64")) -and ((Check_Program_Installed("Microsoft Visual C++ 2013 x86")) -and (AgentIsOnFileSystem))) {
+    Write-Log -Message ('Agent is already installed, not installing again.')
+    exit 1
+  }
+}
+
+#Agent Installer Loop
+$ConfirmInstall = AgentIsOnFileSystem
+[int]$ConfirmInstallCounter = 0
+
+while ($ConfirmInstall -ne $true) {
+  Start-Sleep -s 10
+  DownloadAndInstallAgent
+  $ConfirmInstall = AgentIsOnFileSystem
+  $ConfirmInstallCounter ++
+
+  #60s Timeout
+  if ($ConfirmInstallCounter -eq 60) {
+    Write-Log -Message ('Jumpcloud agent installation failed') -Level Error
+    #exit 1
+  }
+}
+
+#DownloadAndInstallAgent
+
+#Leave Domain
 Write-Log -Message ('Leaving Domain')
 try {
   (Get-WmiObject -Class Win32_ComputerSystem).UnjoinDomainOrWorkgroup($null, $null, 0)
@@ -345,7 +298,7 @@ catch {
   exit 1
 }
 
-#cleanup folders again before reboot
+#Cleanup Folders Again Before Reboot
 Write-Log -Message ('Removing Temp Files & Folders.')
 try {
   Remove-ItemSafely -Path 'c:\windows\temp\JCADMU\' -Recurse
