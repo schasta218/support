@@ -40,7 +40,7 @@
 
 ## ADK - Assesment Deployment Kit
 
-> Windows Assessment and Deployment Kit (ADK) for Windows 10 provides new and improved deployment tools for automating large-scale deployments of Windows 10.
+> Windows Assessment and Deployment Kit (ADK) for Windows provides new and improved deployment tools for automating large-scale deployments of Windows.
 
 
 
