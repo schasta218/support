@@ -294,7 +294,7 @@ Function DownloadAndInstallAgent()
         Invoke-Expression -Command:($msvc2013x86install)
         Write-Log -Message 'JCAgent prereq installed'
     }
-    Start-Sleep -s 2
+    Start-Sleep -s 10
     If (!(AgentIsOnFileSystem))
     {
         Write-Log -Message 'Downloading JCAgent Installer'
@@ -315,17 +315,17 @@ Function DownloadAndInstallAgent()
 }
 
 #Agent Installer Loop
-$ConfirmInstall = AgentIsOnFileSystem
 [int]$InstallRetryCounter = 0
 Do
 {
     $ConfirmInstall = DownloadAndInstallAgent
-    If ($InstallRetryCounter -eq 3)
-    {
-        Write-Log -Message ('Jumpcloud agent installation failed') -Level Error
-        Exit 1
+    $InstallRetryCounter++
+    If ($InstallRetryCounter -eq 3) {
+    Write-Log -Message ('Jumpcloud agent installation failed') -Level Error
+    Exit 1
     }
-} While ($ConfirmInstall -ne $true -or $InstallRetryCounter -le 3)
+} While ($ConfirmInstall -ne $true -and $InstallRetryCounter -le 3)
+
 
 #Leave Domain
 Write-Log -Message ('Leaving Domain')

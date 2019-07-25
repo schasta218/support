@@ -6,11 +6,9 @@ $formpath = $scriptPath + '\xaml.ps1'
 $jcadmupath = $scriptPath + '\jcadmu.ps1'
 
 $FormResults = & $formpath
-If ($FormResults)
-{
-    $FormResults | Invoke-Expression -Command:($jcadmupath)
+If ($FormResults) {
+  $FormResults | Invoke-Expression -Command:($jcadmupath)
 }
-Else
-{
-    Write-Error ('Form did not return anything.')
+Else {
+  Write-Error ('Form did not return anything.')
 }
