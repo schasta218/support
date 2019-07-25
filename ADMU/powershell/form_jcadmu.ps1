@@ -5,7 +5,12 @@ $scriptPath = Split-Path $Invocation.MyCommand.Path
 $formpath = $scriptPath + '\xaml.ps1'
 $jcadmupath = $scriptPath + '\jcadmu.ps1'
 
-& $formpath
-if ($null -eq $FormResults){
-& $jcadmupath -inputobject $FormResults
+$FormResults = & $formpath
+If ($FormResults)
+{
+    $FormResults | Invoke-Expression -Command:($jcadmupath)
+}
+Else
+{
+    Write-Error ('Form did not return anything.')
 }

@@ -5,10 +5,10 @@ $scriptPath = Split-Path $Invocation.MyCommand.Path
 $Banner = @'
          __                          ______ __                   __
         / /__  __ ____ ___   ____   / ____// /____   __  __ ____/ /
-   __  / // / / // __  __ \ / __ \ / /    / // __ \ / / / // __  / 
-  / /_/ // /_/ // / / / / // /_/ // /___ / // /_/ // /_/ // /_/ /  
-  \____/ \____//_/ /_/ /_// ____/ \____//_/ \____/ \____/ \____/   
-                         /_/                                                      
+   __  / // / / // __  __ \ / __ \ / /    / // __ \ / / / // __  /
+  / /_/ // /_/ // / / / / // /_/ // /___ / // /_/ // /_/ // /_/ /
+  \____/ \____//_/ /_/ /_// ____/ \____//_/ \____/ \____/ \____/
+                         /_/
                                                 ADMU v1.0.0
 '@
 
@@ -227,7 +227,7 @@ function xamlform {
   $lbMoreInfo.Add_PreviewMouseDown( {[system.Diagnostics.Process]::start('https://github.com/TheJumpCloud/support/wiki')})
 
   $bDeleteProfile.Add_Click( {
-      
+
       #ORIGINAL
 
       #build and return object
@@ -240,11 +240,11 @@ function xamlform {
 
       #Close form
       #$Form.close()
-      #& C:\Users\Administrator\Desktop\powershell\jcadmu.ps1 -inputobject $FormResults 
-      
-  
-      
-      
+      #& C:\Users\Administrator\Desktop\powershell\jcadmu.ps1 -inputobject $FormResults
+
+
+
+
       #NEW1
       #close form
       $Form.close()
