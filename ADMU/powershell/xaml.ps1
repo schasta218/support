@@ -1,7 +1,14 @@
+# Load functions
+. ((Split-Path -Path:($MyInvocation.MyCommand.Path)) + '\Functions.ps1')
+# Define misc static variables
+$WmiComputerSystem = Get-WmiObject -Class:('Win32_ComputerSystem')
+$WmiUserProfile = Get-WmiObject -Class:('Win32_UserProfile') -Property *
+$USMTPath = 'C:\adk\Assessment and Deployment Kit\User State Migration Tool\'
+$FormResults = [PSCustomObject]@{}
 #==============================================================================================
 # XAML Code - Imported from Visual Studio WPF Application
 #==============================================================================================
-[void][System.Reflection.Assembly]::LoadWithPartialName('presentationframework')
+[void][System.Reflection.Assembly]::LoadWithPartialName('PresentationFramework')
 [xml]$XAML = @'
 <Window
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -36,9 +43,9 @@
         <Label Content="Label" HorizontalAlignment="Left" Margin="301.285,512.775,0,0" VerticalAlignment="Top"/>
         <Label Name="lbComputerName" Content="" HorizontalAlignment="Left" Margin="604.764,130.817,0,0" VerticalAlignment="Top" Width="166.021"/>
         <Label Content="Label" HorizontalAlignment="Left" Margin="675.367,441.755,0,0" VerticalAlignment="Top"/>
-        <Label Name="lbusmtStatus" Content="" HorizontalAlignment="Left" Margin="604.764,187.444,0,0" VerticalAlignment="Top" Width="165.621"/>
+        <Label Name="lbUSMTStatus" Content="" HorizontalAlignment="Left" Margin="604.764,187.444,0,0" VerticalAlignment="Top" Width="165.621"/>
         <GroupBox Header="Accept EULA" HorizontalAlignment="Left" Height="73.99" Margin="780.381,124.454,0,0" VerticalAlignment="Top" Width="92.719">
-            <StackPanel Name="spaccepteula" HorizontalAlignment="Left" Height="36.126" Margin="5.249,17.084,0,-1.21" VerticalAlignment="Top" Width="54.895" RenderTransformOrigin="0.5,0.5">
+            <StackPanel Name="spAcceptEula" HorizontalAlignment="Left" Height="36.126" Margin="5.249,17.084,0,-1.21" VerticalAlignment="Top" Width="54.895" RenderTransformOrigin="0.5,0.5">
                 <StackPanel.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform/>
@@ -55,185 +62,147 @@
     </Grid>
 </Window>
 '@
-
-#Read XAML
+# Read XAML
 $reader = (New-Object System.Xml.XmlNodeReader $xaml)
-try {$Form = [Windows.Markup.XamlReader]::Load( $reader )}
-catch {Write-Host "Unable to load Windows.Markup.XamlReader. Some possible causes for this problem include: .NET Framework is missing PowerShell must be launched with PowerShell -sta, invalid XAML code was encountered."; exit}
-
+Try
+{
+    $Form = [Windows.Markup.XamlReader]::Load($reader)
+}
+Catch
+{
+    Write-Error "Unable to load Windows.Markup.XamlReader. Some possible causes for this problem include: .NET Framework is missing PowerShell must be launched with PowerShell -sta, invalid XAML code was encountered.";
+    Exit;
+}
 #===========================================================================
 # Store Form Objects In PowerShell
 #===========================================================================
-
-$xaml.SelectNodes("//*[@Name]") | % {Set-Variable -Name ($_.Name) -Value $Form.FindName($_.Name)}
-
-##set labels and vars on load
-
-#Check PartOfDomain & Disable Controls
-if ((Get-WmiObject -Class Win32_ComputerSystem).PartOfDomain) {
-  $domainname = (Get-WmiObject win32_computersystem).Domain
+$xaml.SelectNodes("//*[@Name]") | ForEach-Object {Set-Variable -Name ($_.Name) -Value $Form.FindName($_.Name)}
+## Set labels and vars on load
+# Check PartOfDomain & Disable Controls
+If ($WmiComputerSystem.PartOfDomain)
+{
+    $DomainName = $WmiComputerSystem.Domain
 }
-else {
-  $domainname = "Not Domain Joined"
-  $bDeleteProfile.Content = "No Domain"
-  $bDeleteProfile.IsEnabled = $false
-  $tbJumpCloudConnectKey.IsEnabled = $false
-  $tbJumpCloudUserName.IsEnabled = $false
-  $tbTempPassword.IsEnabled = $false
-  $lvProfileList.IsEnabled = $false
-  $spaccepteula.IsEnabled = $false
-  $lbDomainName.FontWeight = "Bold"
-  $lbDomainName.Foreground = "Red"
-}
-if (!($domainname -eq "Not Domain Joined")) {
-  $netbiosname = $domainname.Substring(0, $domainname.IndexOf('.'))
-}
-$localcomputername = (Get-WmiObject Win32_ComputerSystem).Name
-$adksetuppath = 'C:\windows\Temp\JCAD\'
-$adksetupfile = 'adksetup.exe'
-$usmtstatus = (Test-Path 'C:\adk\Assessment and Deployment Kit\User State Migration Tool\')
-$lbDomainName.Content = $domainname
-$lbComputerName.Content = $localcomputername
-$lbusmtStatus.Content = $usmtstatus
-
-
-Function Validate-button {
-  if (($tbJumpCloudUserName_valid -and $tbJumpCloudConnectKey_valid -and $tbTempPassword_valid) -eq $true -and ($lvProfileList.SelectedItems -ne $null)) {
-    $bDeleteProfile.Content = "Migrate Profile"
-    $bDeleteProfile.IsEnabled = "true"
-  }
-  elseif (($tbJumpCloudUserName_valid -and $tbJumpCloudConnectKey_valid -and $tbTempPassword_valid) -eq $false -and ($lvProfileList.SelectedItems -ne $null)) {
-    $bDeleteProfile.Content = "Correct Errors"
+Else
+{
+    $DomainName = "Not Domain Joined"
+    $bDeleteProfile.Content = "No Domain"
     $bDeleteProfile.IsEnabled = $false
-  }
-  else {
-    $bDeleteProfile.Content = "Select Profile"
-    $bDeleteProfile.IsEnabled = $false
-  }
+    $tbJumpCloudConnectKey.IsEnabled = $false
+    $tbJumpCloudUserName.IsEnabled = $false
+    $tbTempPassword.IsEnabled = $false
+    $lvProfileList.IsEnabled = $false
+    $spAcceptEula.IsEnabled = $false
+    $lbDomainName.FontWeight = "Bold"
+    $lbDomainName.Foreground = "Red"
 }
-
-#validation
-function Validate-IsNotEmpty ([string] $field) {
-  If (([System.String]::IsNullOrEmpty($field))) {
-    return $true
-  }
-  else {
-    return $false
-  }
+$lbDomainName.Content = $DomainName
+$lbComputerName.Content = $WmiComputerSystem.Name
+$lbUSMTStatus.Content = Test-Path -Path:($USMTPath)
+Function Validate-Button
+{
+    If (($tbJumpCloudUserName_valid -and $tbJumpCloudConnectKey_valid -and $tbTempPassword_valid) -eq $true -and -not [System.String]::IsNullOrEmpty($lvProfileList.SelectedItems.UserName))
+    {
+        $bDeleteProfile.Content = "Migrate Profile"
+        $bDeleteProfile.IsEnabled = $true
+    }
+    ElseIf (($tbJumpCloudUserName_valid -and $tbJumpCloudConnectKey_valid -and $tbTempPassword_valid) -eq $false -and -not [System.String]::IsNullOrEmpty($lvProfileList.SelectedItems.UserName))
+    {
+        $bDeleteProfile.Content = "Correct Errors"
+        $bDeleteProfile.IsEnabled = $false
+    }
+    Else
+    {
+        $bDeleteProfile.Content = "Select Profile"
+        $bDeleteProfile.IsEnabled = $false
+    }
 }
-
-function Validate-Is40chars ([string] $field) {
-  if ($field.Length -eq 40) {
-    return $true
-  }
-  return $false
+## Form changes & interactions
+# EULA radio button event handler
+[System.Windows.RoutedEventHandler]$ChooseRadioHandler = {
+    $AcceptEULA = If ($_.source.content -eq "False")
+    {
+        $false
+    }
+    Else
+    {
+        $true
+    }
 }
-
-function Validate-HasNoSpaces ([string] $field) {
-  if ($field -like "* *") {
-    return $false
-  }
-  return $true
-}
-
-Function Get-ProfileList {
-  #get list of profiles from computer
-  $Profiles = Get-wmiobject -Class Win32_UserProfile -Property * | Where-Object {$_.Special -eq $false} | Add-Member -MemberType ScriptProperty -Name UserName -Value { (New-Object System.Security.Principal.SecurityIdentifier($this.Sid)).Translate([System.Security.Principal.NTAccount]).Value } -PassThru | Select-Object Username, RoamingConfigured, Loaded, @{Name = "LastLogin"; EXPRESSION = {$_.ConvertToDateTime($_.lastusetime)}}
-  $lvPorfileListOutput = $Profiles | % {$lvProfileList.Items.Add($_)} #put the list of profiles in the profile box
-}
-
-##Form changes & interactions
-
-#EULA radio button event handler
-[System.Windows.RoutedEventHandler]$ChoosedRadioHandler = {
-  if ($_.source.content -eq "False") {
-    $script:AcceptEULA = $false
-  }
-  else {
-    $script:AcceptEULA = $true
-  }
-}
-$spaccepteula.AddHandler([System.Windows.Controls.RadioButton]::CheckedEvent, $ChoosedRadioHandler)
+$spAcceptEula.AddHandler([System.Windows.Controls.RadioButton]::CheckedEvent, $ChooseRadioHandler)
 $tbJumpCloudUserName.add_TextChanged( {
-    $script:tbJumpCloudUserName_valid = !(Validate-IsNotEmpty $tbJumpCloudUserName.Text) -and (Validate-HasNoSpaces $tbJumpCloudUserName.Text)
-    Validate-button
-    if ($tbJumpCloudUserName_valid -eq $false) {
-      $tbJumpCloudUserName.Background = "red"
-      $tbJumpCloudUserName.Tooltip = "JumpCloud User Name Can't Be Empty Or Contain Spaces"
-    }
-    else {
-      $tbJumpCloudUserName.Background = "white"
-      $tbJumpCloudUserName.Tooltip = $null
-      $tbJumpCloudUserName.FontWeight = "Normal"
-      $script:JumpCloudUserName = $tbJumpCloudUserName.Text
-    }
-  })
-
+        $tbJumpCloudUserName_valid = !(Validate-IsNotEmpty $tbJumpCloudUserName.Text) -and (Validate-HasNoSpaces $tbJumpCloudUserName.Text)
+        Validate-Button
+        If ($tbJumpCloudUserName_valid -eq $false)
+        {
+            $tbJumpCloudUserName.Background = "red"
+            $tbJumpCloudUserName.Tooltip = "JumpCloud User Name Can't Be Empty Or Contain Spaces"
+        }
+        Else
+        {
+            $tbJumpCloudUserName.Background = "white"
+            $tbJumpCloudUserName.Tooltip = $null
+            $tbJumpCloudUserName.FontWeight = "Normal"
+        }
+    })
 $tbJumpCloudConnectKey.add_TextChanged( {
-    $script:tbJumpCloudConnectKey_valid = (Validate-Is40chars $tbJumpCloudConnectKey.Text) -and (Validate-HasNoSpaces $tbJumpCloudConnectKey.Text)
-    Validate-button
-    if ($tbJumpCloudConnectKey_valid -eq $false) {
-      $tbJumpCloudConnectKey.Background = "red"
-      $tbJumpCloudConnectKey.Tooltip = "Connect Key Must be 40chars & Not Contain Spaces"
-    }
-    else {
-      $tbJumpCloudConnectKey.Background = "white"
-      $tbJumpCloudConnectKey.Tooltip = $null
-      $tbJumpCloudConnectKey.FontWeight = "Normal"
-      $script:JumpCloudConnectKey = $tbJumpCloudConnectKey.Text
-    }
-  })
-
+        $tbJumpCloudConnectKey_valid = (Validate-Is40chars $tbJumpCloudConnectKey.Text) -and (Validate-HasNoSpaces $tbJumpCloudConnectKey.Text)
+        Validate-Button
+        If ($tbJumpCloudConnectKey_valid -eq $false)
+        {
+            $tbJumpCloudConnectKey.Background = "red"
+            $tbJumpCloudConnectKey.Tooltip = "Connect Key Must be 40chars & Not Contain Spaces"
+        }
+        Else
+        {
+            $tbJumpCloudConnectKey.Background = "white"
+            $tbJumpCloudConnectKey.Tooltip = $null
+            $tbJumpCloudConnectKey.FontWeight = "Normal"
+            $JumpCloudConnectKey = $tbJumpCloudConnectKey.Text
+        }
+    })
 $tbTempPassword.add_TextChanged( {
-    $script:tbTempPassword_valid = !(Validate-IsNotEmpty $tbTempPassword.Text) -and (Validate-HasNoSpaces $tbTempPassword.Text)
-    Validate-button
-    if ($tbTempPassword_valid -eq $false) {
-      $tbTempPassword.Background = "red"
-      $tbTempPassword.Tooltip = "Connect Key Must Be 40chars & No spaces"
-    }
-    else {
-      $tbTempPassword.Background = "white"
-      $tbTempPassword.Tooltip = $null
-      $tbTempPassword.FontWeight = "Normal"
-      $script:TempPassword = $tbTempPassword.Text
-    }
-  })
-
-#change button when profile selected
+        $tbTempPassword_valid = !(Validate-IsNotEmpty $tbTempPassword.Text) -and (Validate-HasNoSpaces $tbTempPassword.Text)
+        Validate-Button
+        If ($tbTempPassword_valid -eq $false)
+        {
+            $tbTempPassword.Background = "red"
+            $tbTempPassword.Tooltip = "Connect Key Must Be 40chars & No spaces"
+        }
+        Else
+        {
+            $tbTempPassword.Background = "white"
+            $tbTempPassword.Tooltip = $null
+            $tbTempPassword.FontWeight = "Normal"
+            $TempPassword = $tbTempPassword.Text
+        }
+    })
+# Change button when profile selected
 $lvProfileList.Add_SelectionChanged( {
-    $selectedusername = ($lvProfileList.SelectedItem.username)
-    $script:DomainUserName = $selectedusername.Substring($selectedusername.IndexOf('\') + 1)
-    write-host $DomainUserName
-    Validate-button
-  })
-
-#AcceptEULA moreinfo link - Mouse button event
-$lbMoreInfo.Add_PreviewMouseDown( {[system.Diagnostics.Process]::start('https://github.com/TheJumpCloud/support/tree/BS-ADMU-version_1.0.0/ADMU#EULA--Legal-Explanation')})
-
+        $SelectedUserName = ($lvProfileList.SelectedItem.username)
+        $DomainUserName = $SelectedUserName.Substring($SelectedUserName.IndexOf('\') + 1)
+        Write-Host $DomainUserName
+        Validate-Button
+    })
+# AcceptEULA moreinfo link - Mouse button event
+$lbMoreInfo.Add_PreviewMouseDown( {[System.Diagnostics.Process]::start('https://github.com/TheJumpCloud/support/tree/BS-ADMU-version_1.0.0/ADMU#EULA--Legal-Explanation')})
 $bDeleteProfile.Add_Click( {
-
-    #Build formresults object
-    $global:FormResults = [PSCustomObject]@{}
-    Add-Member -InputObject:($FormResults) -MemberType:('NoteProperty') -Name:('AcceptEula') -Value:($AcceptEula)
-    Add-Member -InputObject:($FormResults) -MemberType:('NoteProperty') -Name:('DomainUserName') -Value:($DomainUserName)
-    Add-Member -InputObject:($FormResults) -MemberType:('NoteProperty') -Name:('JumpCloudUserName') -Value:($JumpCloudUserName)
-    Add-Member -InputObject:($FormResults) -MemberType:('NoteProperty') -Name:('TempPassword') -Value:($TempPassword)
-    Add-Member -InputObject:($FormResults) -MemberType:('NoteProperty') -Name:('JumpCloudConnectKey') -Value:($JumpCloudConnectKey)
-
-    #Close form
-    $Form.close()
-  })
-
-#Load profilelist into listview
-Get-ProfileList
-
-$script:TempPassword = $tbTempPassword.Text
-$script:AcceptEULA = $true
-$script:tbTempPassword_valid = $true
-
+        # Build FormResults object
+        Add-Member -InputObject:($FormResults) -MemberType:('NoteProperty') -Name:('AcceptEula') -Value:($AcceptEula)
+        Add-Member -InputObject:($FormResults) -MemberType:('NoteProperty') -Name:('DomainUserName') -Value:($DomainUserName)
+        Add-Member -InputObject:($FormResults) -MemberType:('NoteProperty') -Name:('JumpCloudUserName') -Value:($JumpCloudUserName)
+        Add-Member -InputObject:($FormResults) -MemberType:('NoteProperty') -Name:('TempPassword') -Value:($TempPassword)
+        Add-Member -InputObject:($FormResults) -MemberType:('NoteProperty') -Name:('JumpCloudConnectKey') -Value:($JumpCloudConnectKey)
+        # Close form
+        $Form.Close()
+    })
+# Get list of profiles from computer into listview
+$Profiles = $WmiUserProfile | Where-Object {$_.Special -eq $false} | Select-Object SID, RoamingConfigured, Loaded, @{Name = "LastLogin"; EXPRESSION = {$_.ConvertToDateTime($_.lastusetime)}}, @{Name = "UserName"; EXPRESSION = {(New-Object System.Security.Principal.SecurityIdentifier($_.SID)).Translate([System.Security.Principal.NTAccount]).Value}; }
+# Put the list of profiles in the profile box
+$Profiles | ForEach-Object {$lvProfileList.Items.Add($_) | Out-Null}
+$TempPassword = $tbTempPassword.Text
 #===========================================================================
 # Shows the form
 #===========================================================================
-$Form.Showdialog() | out-null
-
-return $FormResults
+$Form.Showdialog() | Out-Null
+Return $FormResults
