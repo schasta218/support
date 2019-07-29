@@ -3,12 +3,12 @@ $scriptPath = (Split-Path -Path:($MyInvocation.MyCommand.Path)) + '\'
 # Define misc. variables
 $Template_Command = '& "{0}"'
 # Define ref files
-$functionsPath = $Template_Command -f ($scriptPath + 'import_functions.ps1')
+$functionsPath = $Template_Command -f ($scriptPath + 'Functions.ps1')
 $xamlPath = $Template_Command -f ($scriptPath + 'xaml.ps1')
 $jcAdmuPath = $Template_Command -f ($scriptPath + 'jcadmu.ps1')
 # Load functions
 #Invoke-Expression -Command:($functionsPath)
-& .\import_functions.ps1
+& .\Functions.ps1
 # Load form
 $formResults = Invoke-Expression -Command:($xamlPath)
 # Send form results to process
