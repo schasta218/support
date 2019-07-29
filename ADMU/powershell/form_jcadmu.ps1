@@ -7,8 +7,7 @@ $functionsPath = $Template_Command -f ($scriptPath + 'Functions.ps1')
 $xamlPath = $Template_Command -f ($scriptPath + 'xaml.ps1')
 $jcAdmuPath = $Template_Command -f ($scriptPath + 'jcadmu.ps1')
 # Load functions
-#Invoke-Expression -Command:($functionsPath)
-& .\Functions.ps1
+Invoke-Expression -Command:($functionsPath)
 # Load form
 $formResults = Invoke-Expression -Command:($xamlPath)
 # Send form results to process
