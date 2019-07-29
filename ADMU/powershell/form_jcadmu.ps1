@@ -13,7 +13,8 @@ $formResults = Invoke-Expression -Command:($xamlPath)
 # Send form results to process
 If ($formResults)
 {
-    $formResults | Invoke-Expression -Command:($jcAdmuPath)
+    #$formResults | Invoke-Expression -Command:($jcAdmuPath)
+    & .\jcadmu.ps1 -inputobject $formResults
 }
 Else
 {
