@@ -86,13 +86,13 @@ If ($WmiComputerSystem.PartOfDomain)
 Else
 {
     $DomainName = "Not Domain Joined"
-    #$bDeleteProfile.Content = "No Domain"
-    #$bDeleteProfile.IsEnabled = $false
-    #$tbJumpCloudConnectKey.IsEnabled = $false
-    #$tbJumpCloudUserName.IsEnabled = $false
-    #$tbTempPassword.IsEnabled = $false
-    #$lvProfileList.IsEnabled = $false
-    #$spAcceptEula.IsEnabled = $false
+    $bDeleteProfile.Content = "No Domain"
+    $bDeleteProfile.IsEnabled = $false
+    $tbJumpCloudConnectKey.IsEnabled = $false
+    $tbJumpCloudUserName.IsEnabled = $false
+    $tbTempPassword.IsEnabled = $false
+    $lvProfileList.IsEnabled = $false
+    $spAcceptEula.IsEnabled = $false
     $lbDomainName.FontWeight = "Bold"
     $lbDomainName.Foreground = "Red"
 }
@@ -105,7 +105,7 @@ Function Validate-Button([object]$tbJumpCloudUserName, [object]$tbJumpCloudConne
     Write-Debug ('Valid UserName: ' + $tbJumpCloudUserName)
     Write-Debug ('Valid ConnectKey: ' + $tbJumpCloudConnectKey)
     Write-Debug ('Valid Password: ' + $tbTempPassword)
-    Write-Debug ('Has UserName not been selected: ' + [System.String]::IsNullOrEmpty($lvProfileList.SelectedItems.UserName))
+    Write-Debug ('Has UserName not been selected: ' + [System.String]::IsNullOrEmpty($lvProfileList.SelectedItem.UserName))
     If(![System.String]::IsNullOrEmpty($lvProfileList.SelectedItems.UserName))
     {
         If(!(Validate-IsNotEmpty $tbJumpCloudUserName.Text) -and (Validate-HasNoSpaces $tbJumpCloudUserName.Text) `
