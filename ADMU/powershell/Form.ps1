@@ -86,13 +86,13 @@ If ($WmiComputerSystem.PartOfDomain)
 Else
 {
     $DomainName = "Not Domain Joined"
-    $bDeleteProfile.Content = "No Domain"
-    $bDeleteProfile.IsEnabled = $false
-    $tbJumpCloudConnectKey.IsEnabled = $false
-    $tbJumpCloudUserName.IsEnabled = $false
-    $tbTempPassword.IsEnabled = $false
-    $lvProfileList.IsEnabled = $false
-    $spAcceptEula.IsEnabled = $false
+    #$bDeleteProfile.Content = "No Domain"
+    #$bDeleteProfile.IsEnabled = $false
+    #$tbJumpCloudConnectKey.IsEnabled = $false
+    #$tbJumpCloudUserName.IsEnabled = $false
+    #$tbTempPassword.IsEnabled = $false
+    #$lvProfileList.IsEnabled = $false
+    #$spAcceptEula.IsEnabled = $false
     $lbDomainName.FontWeight = "Bold"
     $lbDomainName.Foreground = "Red"
 }
