@@ -1,8 +1,6 @@
 # Load functions
 . ((Split-Path -Path:($MyInvocation.MyCommand.Path)) + '\Functions.ps1')
 # Define misc static variables
-$WmiComputerSystem = Get-WmiObject -Class:('Win32_ComputerSystem')
-$WmiUserProfile = Get-WmiObject -Class:('Win32_UserProfile') -Property *
 $UserStateMigrationToolPath = 'C:\adk\Assessment and Deployment Kit\User State Migration Tool\'
 $FormResults = [PSCustomObject]@{}
 #==============================================================================================
@@ -79,6 +77,7 @@ Catch
 $xaml.SelectNodes("//*[@Name]") | ForEach-Object {Set-Variable -Name ($_.Name) -Value $Form.FindName($_.Name)}
 ## Set labels and vars on load
 # Check PartOfDomain & Disable Controls
+$WmiComputerSystem = Get-WmiObject -Class:('Win32_ComputerSystem')
 If ($WmiComputerSystem.PartOfDomain)
 {
     $DomainName = $WmiComputerSystem.Domain
@@ -204,7 +203,7 @@ $bDeleteProfile.Add_Click( {
         $Form.Close()
     })
 # Get list of profiles from computer into listview
-$Profiles = $WmiUserProfile | Where-Object {$_.Special -eq $false} | Select-Object SID, RoamingConfigured, Loaded, @{Name = "LastLogin"; EXPRESSION = {$_.ConvertToDateTime($_.lastusetime)}}, @{Name = "UserName"; EXPRESSION = {(New-Object System.Security.Principal.SecurityIdentifier($_.SID)).Translate([System.Security.Principal.NTAccount]).Value}; }
+$Profiles = Get-WmiObject -Class:('Win32_UserProfile') -Property * | Where-Object {$_.Special -eq $false} | Select-Object SID, RoamingConfigured, Loaded, @{Name = "LastLogin"; EXPRESSION = {$_.ConvertToDateTime($_.lastusetime)}}, @{Name = "UserName"; EXPRESSION = {(New-Object System.Security.Principal.SecurityIdentifier($_.SID)).Translate([System.Security.Principal.NTAccount]).Value}; }
 # Put the list of profiles in the profile box
 $Profiles | ForEach-Object {$lvProfileList.Items.Add($_) | Out-Null}
 #===========================================================================

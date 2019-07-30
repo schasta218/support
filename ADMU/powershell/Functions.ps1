@@ -249,53 +249,6 @@ Function Validate-HasNoSpaces ([System.String] $field)
     }
 }
 #endregion Functions
-# Agent Install Helper Functions
-Function AgentIsOnFileSystem()
-{
-    Test-Path -Path:(${AGENT_PATH} / ${AGENT_BINARY_NAME})
-}
-Function InstallAgent()
-{
-    $params = ("${AGENT_INSTALLER_PATH}", "-k ${JumpCloudConnectKey}", "/VERYSILENT", "/NORESTART", "/SUPRESSMSGBOXES", "/NOCLOSEAPPLICATIONS", "/NORESTARTAPPLICATIONS", "/LOG=$env:TEMP\jcUpdate.log")
-    Invoke-Expression "$params"
-}
-Function DownloadAgentInstaller()
-{
-    (New-Object System.Net.WebClient).DownloadFile("${AGENT_INSTALLER_URL}", "${AGENT_INSTALLER_PATH}")
-}
-Function ForceRebootComputerWithDelay
-{
-    Param(
-        [int]$TimeOut = 10
-    )
-    $continue = $true
-
-    while ($continue)
-    {
-        If ([console]::KeyAvailable)
-        {
-            Write-Host "Restart Canceled by key press"
-            Exit;
-        }
-        Else
-        {
-            Write-Host "Press any key to cancel... restarting in $TimeOut" -NoNewLine
-            Start-Sleep -Seconds 1
-            $TimeOut = $TimeOut - 1
-            Clear-Host
-            If ($TimeOut -eq 0)
-            {
-                $continue = $false
-                $Restart = $true
-            }
-        }
-    }
-    If ($Restart -eq $True)
-    {
-        Write-Host "Restarting Computer..."
-        Restart-Computer -ComputerName $env:COMPUTERNAME -Force
-    }
-}
 Function DownloadAndInstallAgent(
     [System.String]$msvc2013x64Link
     , [System.String]$msvc2013Path
@@ -312,7 +265,6 @@ Function DownloadAndInstallAgent(
         DownloadLink -Link:($msvc2013x64Link) -Path:($msvc2013Path + $msvc2013x64File)
         Invoke-Expression -Command:($msvc2013x64Install)
         Write-Log -Message:('JCAgent prereq installed')
-        Start-Sleep -s 10
     }
     If (!(Check_Program_Installed("Microsoft Visual C++ 2013 x86")))
     {
@@ -320,10 +272,10 @@ Function DownloadAndInstallAgent(
         DownloadLink -Link:($msvc2013x86Link) -Path:($msvc2013Path + $msvc2013x86File)
         Invoke-Expression -Command:($msvc2013x86Install)
         Write-Log -Message:('JCAgent prereq installed')
-        Start-Sleep -s 10
     }
     If (!(AgentIsOnFileSystem))
     {
+        Start-Sleep -s 10
         Write-Log -Message:('Downloading JCAgent Installer')
         # Download Installer
         DownloadAgentInstaller

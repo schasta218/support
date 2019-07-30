@@ -184,6 +184,53 @@ Process
         Exit;
     }
     # region SilentAgentInstall
+    # Agent Install Helper Functions
+Function AgentIsOnFileSystem()
+{
+    Test-Path -Path:(${AGENT_PATH} / ${AGENT_BINARY_NAME})
+}
+Function InstallAgent()
+{
+    $params = ("${AGENT_INSTALLER_PATH}", "-k ${JumpCloudConnectKey}", "/VERYSILENT", "/NORESTART", "/SUPRESSMSGBOXES", "/NOCLOSEAPPLICATIONS", "/NORESTARTAPPLICATIONS", "/LOG=$env:TEMP\jcUpdate.log")
+    Invoke-Expression "$params"
+}
+Function DownloadAgentInstaller()
+{
+    (New-Object System.Net.WebClient).DownloadFile("${AGENT_INSTALLER_URL}", "${AGENT_INSTALLER_PATH}")
+}
+Function ForceRebootComputerWithDelay
+{
+    Param(
+        [int]$TimeOut = 10
+    )
+    $continue = $true
+
+    while ($continue)
+    {
+        If ([console]::KeyAvailable)
+        {
+            Write-Host "Restart Canceled by key press"
+            Exit;
+        }
+        Else
+        {
+            Write-Host "Press any key to cancel... restarting in $TimeOut" -NoNewLine
+            Start-Sleep -Seconds 1
+            $TimeOut = $TimeOut - 1
+            Clear-Host
+            If ($TimeOut -eq 0)
+            {
+                $continue = $false
+                $Restart = $true
+            }
+        }
+    }
+    If ($Restart -eq $True)
+    {
+        Write-Host "Restarting Computer..."
+        Restart-Computer -ComputerName $env:COMPUTERNAME -Force
+    }
+}
     # Agent Installer Loop
     [int]$InstallReTryCounter = 0
     Do
