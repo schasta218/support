@@ -87,40 +87,47 @@ Else
 {
     $DomainName = "Not Domain Joined"
     $bDeleteProfile.Content = "No Domain"
-    $bDeleteProfile.IsEnabled = $false
-    $tbJumpCloudConnectKey.IsEnabled = $false
-    $tbJumpCloudUserName.IsEnabled = $false
-    $tbTempPassword.IsEnabled = $false
-    $lvProfileList.IsEnabled = $false
-    $spAcceptEula.IsEnabled = $false
+    # $bDeleteProfile.IsEnabled = $false
+    # $tbJumpCloudConnectKey.IsEnabled = $false
+    # $tbJumpCloudUserName.IsEnabled = $false
+    # $tbTempPassword.IsEnabled = $false
+    # $lvProfileList.IsEnabled = $false
+    # $spAcceptEula.IsEnabled = $false
     $lbDomainName.FontWeight = "Bold"
     $lbDomainName.Foreground = "Red"
 }
 $lbDomainName.Content = $DomainName
 $lbComputerName.Content = $WmiComputerSystem.Name
 $lbUSMTStatus.Content = Test-Path -Path:($USMTPath)
-Function Validate-Button
+Function Validate-Button([string]$tbJumpCloudUserName_valid, [string]$tbJumpCloudConnectKey_valid, [string]$tbTempPassword_valid, [object]$lvProfileList)
 {
+    Write-Host ('---------------------------------------------------------')
+    Write-Host ('Valid UserName: ' + $tbJumpCloudUserName_valid)
+    Write-Host ('Valid ConnectKey: ' + $tbJumpCloudConnectKey_valid)
+    Write-Host ('Valid Password: ' + $tbTempPassword_valid)
+    Write-Host ('Has UserName not been selected: ' + [System.String]::IsNullOrEmpty($lvProfileList.SelectedItems.UserName))
     If (($tbJumpCloudUserName_valid -and $tbJumpCloudConnectKey_valid -and $tbTempPassword_valid) -eq $true -and -not [System.String]::IsNullOrEmpty($lvProfileList.SelectedItems.UserName))
     {
-        $bDeleteProfile.Content = "Migrate Profile"
-        $bDeleteProfile.IsEnabled = $true
+        $script:bDeleteProfile.Content = "Migrate Profile"
+        $script:bDeleteProfile.IsEnabled = $true
     }
     ElseIf (($tbJumpCloudUserName_valid -and $tbJumpCloudConnectKey_valid -and $tbTempPassword_valid) -eq $false -and -not [System.String]::IsNullOrEmpty($lvProfileList.SelectedItems.UserName))
     {
-        $bDeleteProfile.Content = "Correct Errors"
-        $bDeleteProfile.IsEnabled = $false
+        $script:bDeleteProfile.Content = "Correct Errors"
+        $script:bDeleteProfile.IsEnabled = $false
     }
     Else
     {
-        $bDeleteProfile.Content = "Select Profile"
-        $bDeleteProfile.IsEnabled = $false
+        $script:bDeleteProfile.Content = "Select Profile"
+        $script:bDeleteProfile.IsEnabled = $false
     }
 }
 ## Form changes & interactions
 # EULA radio button event handler
+$script:AcceptEULA = $true
+$script:tbTempPassword_valid = $true
 [System.Windows.RoutedEventHandler]$ChooseRadioHandler = {
-    $AcceptEULA = If ($_.source.content -eq "False")
+    $script:AcceptEULA = If ($_.source.content -eq "False")
     {
         $false
     }
@@ -131,8 +138,8 @@ Function Validate-Button
 }
 $spAcceptEula.AddHandler([System.Windows.Controls.RadioButton]::CheckedEvent, $ChooseRadioHandler)
 $tbJumpCloudUserName.add_TextChanged( {
-        $tbJumpCloudUserName_valid = !(Validate-IsNotEmpty $tbJumpCloudUserName.Text) -and (Validate-HasNoSpaces $tbJumpCloudUserName.Text)
-        Validate-Button
+        $script:tbJumpCloudUserName_valid = !(Validate-IsNotEmpty $tbJumpCloudUserName.Text) -and (Validate-HasNoSpaces $tbJumpCloudUserName.Text)
+        Validate-Button -tbJumpCloudUserName_valid:($tbJumpCloudUserName_valid) -tbJumpCloudConnectKey_valid:($tbJumpCloudConnectKey_valid) -tbTempPassword_valid:($tbTempPassword_valid) -lvProfileList:($lvProfileList)
         If ($tbJumpCloudUserName_valid -eq $false)
         {
             $tbJumpCloudUserName.Background = "red"
@@ -146,8 +153,8 @@ $tbJumpCloudUserName.add_TextChanged( {
         }
     })
 $tbJumpCloudConnectKey.add_TextChanged( {
-        $tbJumpCloudConnectKey_valid = (Validate-Is40chars $tbJumpCloudConnectKey.Text) -and (Validate-HasNoSpaces $tbJumpCloudConnectKey.Text)
-        Validate-Button
+        $script:tbJumpCloudConnectKey_valid = (Validate-Is40chars $tbJumpCloudConnectKey.Text) -and (Validate-HasNoSpaces $tbJumpCloudConnectKey.Text)
+        Validate-Button -tbJumpCloudUserName_valid:($tbJumpCloudUserName_valid) -tbJumpCloudConnectKey_valid:($tbJumpCloudConnectKey_valid) -tbTempPassword_valid:($tbTempPassword_valid) -lvProfileList:($lvProfileList)
         If ($tbJumpCloudConnectKey_valid -eq $false)
         {
             $tbJumpCloudConnectKey.Background = "red"
@@ -158,12 +165,11 @@ $tbJumpCloudConnectKey.add_TextChanged( {
             $tbJumpCloudConnectKey.Background = "white"
             $tbJumpCloudConnectKey.Tooltip = $null
             $tbJumpCloudConnectKey.FontWeight = "Normal"
-            $JumpCloudConnectKey = $tbJumpCloudConnectKey.Text
         }
     })
 $tbTempPassword.add_TextChanged( {
-        $tbTempPassword_valid = !(Validate-IsNotEmpty $tbTempPassword.Text) -and (Validate-HasNoSpaces $tbTempPassword.Text)
-        Validate-Button
+        $script:tbTempPassword_valid = !(Validate-IsNotEmpty $tbTempPassword.Text) -and (Validate-HasNoSpaces $tbTempPassword.Text)
+        Validate-Button -tbJumpCloudUserName_valid:($tbJumpCloudUserName_valid) -tbJumpCloudConnectKey_valid:($tbJumpCloudConnectKey_valid) -tbTempPassword_valid:($tbTempPassword_valid) -lvProfileList:($lvProfileList)
         If ($tbTempPassword_valid -eq $false)
         {
             $tbTempPassword.Background = "red"
@@ -174,25 +180,22 @@ $tbTempPassword.add_TextChanged( {
             $tbTempPassword.Background = "white"
             $tbTempPassword.Tooltip = $null
             $tbTempPassword.FontWeight = "Normal"
-            $TempPassword = $tbTempPassword.Text
         }
     })
 # Change button when profile selected
 $lvProfileList.Add_SelectionChanged( {
-        $SelectedUserName = ($lvProfileList.SelectedItem.username)
-        $DomainUserName = $SelectedUserName.Substring($SelectedUserName.IndexOf('\') + 1)
-        Write-Host $DomainUserName
-        Validate-Button
+        $script:SelectedUserName = ($lvProfileList.SelectedItem.username)
+        Validate-Button -tbJumpCloudUserName_valid:($tbJumpCloudUserName_valid) -tbJumpCloudConnectKey_valid:($tbJumpCloudConnectKey_valid) -tbTempPassword_valid:($tbTempPassword_valid) -lvProfileList:($lvProfileList)
     })
 # AcceptEULA moreinfo link - Mouse button event
 $lbMoreInfo.Add_PreviewMouseDown( {[System.Diagnostics.Process]::start('https://github.com/TheJumpCloud/support/tree/BS-ADMU-version_1.0.0/ADMU#EULA--Legal-Explanation')})
 $bDeleteProfile.Add_Click( {
         # Build FormResults object
         Add-Member -InputObject:($FormResults) -MemberType:('NoteProperty') -Name:('AcceptEula') -Value:($AcceptEula)
-        Add-Member -InputObject:($FormResults) -MemberType:('NoteProperty') -Name:('DomainUserName') -Value:($DomainUserName)
-        Add-Member -InputObject:($FormResults) -MemberType:('NoteProperty') -Name:('JumpCloudUserName') -Value:($JumpCloudUserName)
-        Add-Member -InputObject:($FormResults) -MemberType:('NoteProperty') -Name:('TempPassword') -Value:($TempPassword)
-        Add-Member -InputObject:($FormResults) -MemberType:('NoteProperty') -Name:('JumpCloudConnectKey') -Value:($JumpCloudConnectKey)
+        Add-Member -InputObject:($FormResults) -MemberType:('NoteProperty') -Name:('DomainUserName') -Value:($SelectedUserName.Substring($SelectedUserName.IndexOf('\') + 1))
+        Add-Member -InputObject:($FormResults) -MemberType:('NoteProperty') -Name:('JumpCloudUserName') -Value:($tbJumpCloudUserName.Text)
+        Add-Member -InputObject:($FormResults) -MemberType:('NoteProperty') -Name:('TempPassword') -Value:($tbTempPassword.Text)
+        Add-Member -InputObject:($FormResults) -MemberType:('NoteProperty') -Name:('JumpCloudConnectKey') -Value:($tbJumpCloudConnectKey.Text)
         # Close form
         $Form.Close()
     })
@@ -200,7 +203,6 @@ $bDeleteProfile.Add_Click( {
 $Profiles = $WmiUserProfile | Where-Object {$_.Special -eq $false} | Select-Object SID, RoamingConfigured, Loaded, @{Name = "LastLogin"; EXPRESSION = {$_.ConvertToDateTime($_.lastusetime)}}, @{Name = "UserName"; EXPRESSION = {(New-Object System.Security.Principal.SecurityIdentifier($_.SID)).Translate([System.Security.Principal.NTAccount]).Value}; }
 # Put the list of profiles in the profile box
 $Profiles | ForEach-Object {$lvProfileList.Items.Add($_) | Out-Null}
-$TempPassword = $tbTempPassword.Text
 #===========================================================================
 # Shows the form
 #===========================================================================

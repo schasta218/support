@@ -86,7 +86,7 @@ Function Write-Log
     Param
     (
         [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)][ValidateNotNullOrEmpty()][Alias("LogContent")][string]$Message
-        , [Parameter(Mandatory = $false)][Alias('LogPath')][string]$Path = 'C:\Windows\Temp\jcadmu.log'
+        , [Parameter(Mandatory = $false)][Alias('LogPath')][string]$Path = 'C:\Windows\Temp\jcAdmu.log'
         , [Parameter(Mandatory = $false)][ValidateSet("Error", "Warn", "Info")][string]$Level = "Info"
         , [Parameter(Mandatory = $false)][switch]$NoClobber
     )
@@ -142,7 +142,7 @@ Function Write-Log
     {
     }
 }
-Function Remove-ItemSafely
+Function Remove-ItemIfExists
 {
     [CmdletBinding(SupportsShouldProcess = $true)]
     Param(
@@ -151,12 +151,16 @@ Function Remove-ItemSafely
     )
     Process
     {
-        ForEach ($p In $Path)
+        Try
         {
-            If (Test-Path $p)
+            If (Test-Path -Path:($Path))
             {
-                Remove-Item $p -Recurse:$Recurse -WhatIf:$WhatIfPreference
+                Remove-Item -Path:($Path) -Recurse:($Recurse)
             }
+        }
+        Catch
+        {
+            Write-Log -Message ('Removal Of Temp Files & Folders Failed') -Level Warn
         }
     }
 }
@@ -245,3 +249,95 @@ Function Validate-HasNoSpaces ([System.String] $field)
     }
 }
 #endregion Functions
+# Agent Install Helper Functions
+Function AgentIsOnFileSystem()
+{
+    Test-Path -Path:(${AGENT_PATH} / ${AGENT_BINARY_NAME})
+}
+Function InstallAgent()
+{
+    $params = ("${AGENT_INSTALLER_PATH}", "-k ${JumpCloudConnectKey}", "/VERYSILENT", "/NORESTART", "/SUPRESSMSGBOXES", "/NOCLOSEAPPLICATIONS", "/NORESTARTAPPLICATIONS", "/LOG=$env:TEMP\jcUpdate.log")
+    Invoke-Expression "$params"
+}
+Function DownloadAgentInstaller()
+{
+    (New-Object System.Net.WebClient).DownloadFile("${AGENT_INSTALLER_URL}", "${AGENT_INSTALLER_PATH}")
+}
+Function ForceRebootComputerWithDelay
+{
+    Param(
+        [int]$TimeOut = 10
+    )
+    $continue = $true
+
+    while ($continue)
+    {
+        If ([console]::KeyAvailable)
+        {
+            Write-Host "Restart Canceled by key press"
+            Exit;
+        }
+        Else
+        {
+            Write-Host "Press any key to cancel... restarting in $TimeOut" -NoNewLine
+            Start-Sleep -Seconds 1
+            $TimeOut = $TimeOut - 1
+            Clear-Host
+            If ($TimeOut -eq 0)
+            {
+                $continue = $false
+                $Restart = $true
+            }
+        }
+    }
+    If ($Restart -eq $True)
+    {
+        Write-Host "Restarting Computer..."
+        Restart-Computer -ComputerName $env:COMPUTERNAME -Force
+    }
+}
+Function DownloadAndInstallAgent(
+    [System.String]$msvc2013x64Link
+    , [System.String]$msvc2013Path
+    , [System.String]$msvc2013x64File
+    , [System.String]$msvc2013x64Install
+    , [System.String]$msvc2013x86Link
+    , [System.String]$msvc2013x86File
+    , [System.String]$msvc2013x86Install
+)
+{
+    If (!(Check_Program_Installed("Microsoft Visual C++ 2013 x64")))
+    {
+        Write-Log -Message:('Downloading & Installing JCAgent prereq Visual C++ 2013 x64')
+        DownloadLink -Link:($msvc2013x64Link) -Path:($msvc2013Path + $msvc2013x64File)
+        Invoke-Expression -Command:($msvc2013x64Install)
+        Write-Log -Message:('JCAgent prereq installed')
+    }
+    If (!(Check_Program_Installed("Microsoft Visual C++ 2013 x86")))
+    {
+        Write-Log -Message:('Downloading & Installing JCAgent prereq Visual C++ 2013 x86')
+        DownloadLink -Link:($msvc2013x86Link) -Path:($msvc2013Path + $msvc2013x86File)
+        Invoke-Expression -Command:($msvc2013x86Install)
+        Write-Log -Message:('JCAgent prereq installed')
+    }
+    Start-Sleep -s 10
+    If (!(AgentIsOnFileSystem))
+    {
+        Write-Log -Message:('Downloading JCAgent Installer')
+        # Download Installer
+        DownloadAgentInstaller
+        Write-Log -Message:('JumpCloud Agent Download Complete')
+        Write-Log -Message:('Running JCAgent Installer')
+        # Run Installer
+        InstallAgent
+        Write-Log -Message:('JumpCloud Agent Installer Completed')
+    }
+    If (Check_Program_Installed("Microsoft Visual C++ 2013 x64") -and Check_Program_Installed("Microsoft Visual C++ 2013 x86") -and AgentIsOnFileSystem)
+    {
+        Return $true
+    }
+    Else
+    {
+        Return $false
+    }
+}
