@@ -106,7 +106,7 @@ Function Validate-Button([object]$tbJumpCloudUserName, [object]$tbJumpCloudConne
     Write-Debug ('Valid ConnectKey: ' + $tbJumpCloudConnectKey)
     Write-Debug ('Valid Password: ' + $tbTempPassword)
     Write-Debug ('Has UserName not been selected: ' + [System.String]::IsNullOrEmpty($lvProfileList.SelectedItem.UserName))
-    If(![System.String]::IsNullOrEmpty($lvProfileList.SelectedItems.UserName))
+    If(![System.String]::IsNullOrEmpty($lvProfileList.SelectedItem.UserName))
     {
         If(!(Validate-IsNotEmpty $tbJumpCloudUserName.Text) -and (Validate-HasNoSpaces $tbJumpCloudUserName.Text) `
         -and (Validate-Is40chars $tbJumpCloudConnectKey.Text) -and (Validate-HasNoSpaces $tbJumpCloudConnectKey.Text) `
