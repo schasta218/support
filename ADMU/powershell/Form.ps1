@@ -114,17 +114,20 @@ Function Validate-Button([object]$tbJumpCloudUserName, [object]$tbJumpCloudConne
         {
             $script:bDeleteProfile.Content = "Migrate Profile"
             $script:bDeleteProfile.IsEnabled = $true
+            Return $true
         }
         Else
         {
             $script:bDeleteProfile.Content = "Correct Errors"
             $script:bDeleteProfile.IsEnabled = $false
+            Return $false
         }        
     }
     Else
     {
         $script:bDeleteProfile.Content = "Select Profile"
         $script:bDeleteProfile.IsEnabled = $false
+        Return $false
     }
 }
 ## Form changes & interactions
@@ -143,7 +146,7 @@ $script:AcceptEULA = $true
 $spAcceptEula.AddHandler([System.Windows.Controls.RadioButton]::CheckedEvent, $ChooseRadioHandler)
 $tbJumpCloudUserName.add_TextChanged( {
         Validate-Button -tbJumpCloudUserName:($tbJumpCloudUserName) -tbJumpCloudConnectKey:($tbJumpCloudConnectKey) -tbTempPassword:($tbTempPassword) -lvProfileList:($lvProfileList)
-        If ($tbJumpCloudUserName -eq $false)
+        If ((!(Validate-IsNotEmpty $tbJumpCloudUserName.Text) -and (Validate-HasNoSpaces $tbJumpCloudUserName.Text)) -eq $false)
         {
             $tbJumpCloudUserName.Background = "red"
             $tbJumpCloudUserName.Tooltip = "JumpCloud User Name Can't Be Empty Or Contain Spaces"
@@ -157,7 +160,7 @@ $tbJumpCloudUserName.add_TextChanged( {
     })
 $tbJumpCloudConnectKey.add_TextChanged( {
         Validate-Button -tbJumpCloudUserName:($tbJumpCloudUserName) -tbJumpCloudConnectKey:($tbJumpCloudConnectKey) -tbTempPassword:($tbTempPassword) -lvProfileList:($lvProfileList)
-        If ($tbJumpCloudConnectKey -eq $false)
+        If (((Validate-Is40chars $tbJumpCloudConnectKey.Text) -and (Validate-HasNoSpaces $tbJumpCloudConnectKey.Text)) -eq $false)
         {
             $tbJumpCloudConnectKey.Background = "red"
             $tbJumpCloudConnectKey.Tooltip = "Connect Key Must be 40chars & Not Contain Spaces"
@@ -170,8 +173,8 @@ $tbJumpCloudConnectKey.add_TextChanged( {
         }
     })
 $tbTempPassword.add_TextChanged( {
-        Validate-Button -tbJumpCloudUserName:($tbJumpCloudUserName) -tbJumpCloudConnectKey:($tbJumpCloudConnectKey) -tbTempPassword:($tbTempPassword) -lvProfileList:($lvProfileList)
-        If ($tbTempPassword -eq $false)
+        Validate-Button -tbJumpCloudUserName:($tbJumpCloudUserName) -tbJumpCloudConnectKey:($tbJumpCloudConnectKey) -tbTempPassword:($tbTempPassword) -lvProfileList:($lvProfileList) 
+        If ((!(Validate-IsNotEmpty $tbTempPassword.Text) -and (Validate-HasNoSpaces $tbTempPassword.Text)) -eq $false)
         {
             $tbTempPassword.Background = "red"
             $tbTempPassword.Tooltip = "Connect Key Must Be 40chars & No spaces"
