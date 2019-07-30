@@ -16,8 +16,8 @@ Begin
     $jcAdmuTempPath = 'C:\Windows\Temp\jcAdmu\'
     $jcAdmuLogFile = 'C:\Windows\Temp\jcAdmu.log'
     $UserStateMigrationToolPath = $adkPath + 'Assessment and Deployment Kit\User State Migration Tool\'
-    $UserStateMigrationToolx64Path = $UserStateMigrationToolPath + 'amd64\'
-    $UserStateMigrationToolx86Path = $UserStateMigrationToolPath + 'x86\'
+    $UserStateMigrationToolx64Path = $UserStateMigrationToolPath + 'amd64'
+    $UserStateMigrationToolx86Path = $UserStateMigrationToolPath + 'x86'
     $profileStorePath = $jcAdmuTempPath + 'store'
     $adksetupfile = 'adksetup.exe'
     $adkSetupPath = $jcAdmuTempPath + $adksetupfile
