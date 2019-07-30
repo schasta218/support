@@ -211,7 +211,7 @@ $Profiles | ForEach-Object {$lvProfileList.Items.Add($_) | Out-Null}
 # Shows the form
 #===========================================================================
 $Form.Showdialog() | Out-Null
-If (-not [System.String]::IsNullOrEmpty($FormResults))
+If ($bDeleteProfile.IsEnabled -eq $true)
 {
     Return $FormResults
 }

@@ -312,6 +312,7 @@ Function DownloadAndInstallAgent(
         DownloadLink -Link:($msvc2013x64Link) -Path:($msvc2013Path + $msvc2013x64File)
         Invoke-Expression -Command:($msvc2013x64Install)
         Write-Log -Message:('JCAgent prereq installed')
+        Start-Sleep -s 10
     }
     If (!(Check_Program_Installed("Microsoft Visual C++ 2013 x86")))
     {
@@ -319,8 +320,8 @@ Function DownloadAndInstallAgent(
         DownloadLink -Link:($msvc2013x86Link) -Path:($msvc2013Path + $msvc2013x86File)
         Invoke-Expression -Command:($msvc2013x86Install)
         Write-Log -Message:('JCAgent prereq installed')
+        Start-Sleep -s 10
     }
-    Start-Sleep -s 10
     If (!(AgentIsOnFileSystem))
     {
         Write-Log -Message:('Downloading JCAgent Installer')
