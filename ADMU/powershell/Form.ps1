@@ -25,7 +25,7 @@ $FormResults = [PSCustomObject]@{}
                 </GridView>
             </ListView.View>
         </ListView>
-        <Button Name="bDeleteProfile" Content="Fix Errors" HorizontalAlignment="Left" Margin="780.381,200.814,0,0" VerticalAlignment="Top" Width="92.719" Height="23" IsEnabled="True">
+        <Button Name="bDeleteProfile" Content="Select Profile" HorizontalAlignment="Left" Margin="780.381,200.814,0,0" VerticalAlignment="Top" Width="92.719" Height="23" IsEnabled="False">
             <Button.Effect>
                 <DropShadowEffect/>
             </Button.Effect>
@@ -106,7 +106,7 @@ Function Validate-Button([object]$tbJumpCloudUserName, [object]$tbJumpCloudConne
     Write-Debug ('Valid ConnectKey: ' + $tbJumpCloudConnectKey)
     Write-Debug ('Valid Password: ' + $tbTempPassword)
     Write-Debug ('Has UserName not been selected: ' + [System.String]::IsNullOrEmpty($lvProfileList.SelectedItems.UserName))
-    If(-not [System.String]::IsNullOrEmpty($lvProfileList.SelectedItems.UserName))
+    If(![System.String]::IsNullOrEmpty($lvProfileList.SelectedItems.UserName))
     {
         If(!(Validate-IsNotEmpty $tbJumpCloudUserName.Text) -and (Validate-HasNoSpaces $tbJumpCloudUserName.Text) `
         -and (Validate-Is40chars $tbJumpCloudConnectKey.Text) -and (Validate-HasNoSpaces $tbJumpCloudConnectKey.Text) `
