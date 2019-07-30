@@ -3,7 +3,7 @@
 # Define misc static variables
 $WmiComputerSystem = Get-WmiObject -Class:('Win32_ComputerSystem')
 $WmiUserProfile = Get-WmiObject -Class:('Win32_UserProfile') -Property *
-$USMTPath = 'C:\adk\Assessment and Deployment Kit\User State Migration Tool\'
+$UserStateMigrationToolPath = 'C:\adk\Assessment and Deployment Kit\User State Migration Tool\'
 $FormResults = [PSCustomObject]@{}
 #==============================================================================================
 # XAML Code - Imported from Visual Studio WPF Application
@@ -87,25 +87,25 @@ Else
 {
     $DomainName = "Not Domain Joined"
     $bDeleteProfile.Content = "No Domain"
-    # $bDeleteProfile.IsEnabled = $false
-    # $tbJumpCloudConnectKey.IsEnabled = $false
-    # $tbJumpCloudUserName.IsEnabled = $false
-    # $tbTempPassword.IsEnabled = $false
-    # $lvProfileList.IsEnabled = $false
-    # $spAcceptEula.IsEnabled = $false
+    $bDeleteProfile.IsEnabled = $false
+    $tbJumpCloudConnectKey.IsEnabled = $false
+    $tbJumpCloudUserName.IsEnabled = $false
+    $tbTempPassword.IsEnabled = $false
+    $lvProfileList.IsEnabled = $false
+    $spAcceptEula.IsEnabled = $false
     $lbDomainName.FontWeight = "Bold"
     $lbDomainName.Foreground = "Red"
 }
 $lbDomainName.Content = $DomainName
 $lbComputerName.Content = $WmiComputerSystem.Name
-$lbUSMTStatus.Content = Test-Path -Path:($USMTPath)
+$lbUSMTStatus.Content = Test-Path -Path:($UserStateMigrationToolPath)
 Function Validate-Button([string]$tbJumpCloudUserName_valid, [string]$tbJumpCloudConnectKey_valid, [string]$tbTempPassword_valid, [object]$lvProfileList)
 {
-    Write-Host ('---------------------------------------------------------')
-    Write-Host ('Valid UserName: ' + $tbJumpCloudUserName_valid)
-    Write-Host ('Valid ConnectKey: ' + $tbJumpCloudConnectKey_valid)
-    Write-Host ('Valid Password: ' + $tbTempPassword_valid)
-    Write-Host ('Has UserName not been selected: ' + [System.String]::IsNullOrEmpty($lvProfileList.SelectedItems.UserName))
+    Write-Debug ('---------------------------------------------------------')
+    Write-Debug ('Valid UserName: ' + $tbJumpCloudUserName_valid)
+    Write-Debug ('Valid ConnectKey: ' + $tbJumpCloudConnectKey_valid)
+    Write-Debug ('Valid Password: ' + $tbTempPassword_valid)
+    Write-Debug ('Has UserName not been selected: ' + [System.String]::IsNullOrEmpty($lvProfileList.SelectedItems.UserName))
     If (($tbJumpCloudUserName_valid -and $tbJumpCloudConnectKey_valid -and $tbTempPassword_valid) -eq $true -and -not [System.String]::IsNullOrEmpty($lvProfileList.SelectedItems.UserName))
     {
         $script:bDeleteProfile.Content = "Migrate Profile"
