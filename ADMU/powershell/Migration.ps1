@@ -187,7 +187,7 @@ Process
     # Agent Install Helper Functions
 Function AgentIsOnFileSystem()
 {
-    Test-Path -Path:(${AGENT_PATH} / ${AGENT_BINARY_NAME})
+    Test-Path -Path:(${AGENT_PATH} + '/' + ${AGENT_BINARY_NAME})
 }
 Function InstallAgent()
 {
