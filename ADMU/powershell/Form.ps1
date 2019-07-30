@@ -211,4 +211,7 @@ $Profiles | ForEach-Object {$lvProfileList.Items.Add($_) | Out-Null}
 # Shows the form
 #===========================================================================
 $Form.Showdialog() | Out-Null
-Return $FormResults
+If (-not [System.String]::IsNullOrEmpty($FormResults))
+{
+    Return $FormResults
+}

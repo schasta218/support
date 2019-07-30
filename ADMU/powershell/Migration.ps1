@@ -13,7 +13,7 @@ Begin
     # Define misc static variables
     $adkSetupLink = 'https://go.microsoft.com/fwlink/?linkid=2086042'
     $adkPath = 'C:\adk\'
-    $jcAdmuTempPath = 'C:\Windows\Temp\jcAdmu\'
+    $jcAdmuTempPath = 'C:\Windows\Temp\JCADMU\'
     $jcAdmuLogFile = 'C:\Windows\Temp\jcAdmu.log'
     $UserStateMigrationToolPath = $adkPath + 'Assessment and Deployment Kit\User State Migration Tool\'
     $UserStateMigrationToolx64Path = $UserStateMigrationToolPath + 'amd64'
@@ -29,8 +29,8 @@ Begin
     $msvc2013x64Link = 'http://download.microsoft.com/download/0/5/6/056dcda9-d667-4e27-8001-8a0c6971d6b1/vcredist_x64.exe'
     $msvc2013x86Install = "$jcAdmuTempPath$msvc2013x86File /install /quiet /norestart"
     $msvc2013x64Install = "$jcAdmuTempPath$msvc2013x64File /install /quiet /norestart"
-    $CommandScanStateTemplate = '{0}\ScanState.exe {1} /nocompress /i:miguser.xml /i:migapp.xml /l:{1}\scan.log /progress:{1}\scan_progress.log /o /ue:*\* /ui:{2}\{3} /c' # $UserStateMigrationToolVersionPath, $profileStorePath, $netBiosName, $DomainUserName
-    $CommandLoadStateTemplate = '{0}\LoadState.exe {1} /i:miguser.xml /i:migapp.xml /nocompress /l:{1}\load.log /progress:{1}\load_progress.log /ue:*\* /ui:{2}\{3} /laC:{4} /lae /c /mu:{2}\{3}:{5}\{6}' # $UserStateMigrationToolVersionPath, $profileStorePath, $netBiosName, $DomainUserName, $TempPassword, $localComputerName, $JumpCloudUserName
+    $CommandScanStateTemplate = 'cd "{0}"; .\ScanState.exe "{1}" /nocompress /i:"{0}\miguser.xml" /i:"{0}\migapp.xml" /l:"{1}\scan.log" /progress:"{1}\scan_progress.log" /o /ue:"*\*" /ui:"{2}\{3}" /c' # $UserStateMigrationToolVersionPath, $profileStorePath, $netBiosName, $DomainUserName
+    $CommandLoadStateTemplate = 'cd "{0}"; .\LoadState.exe "{1}" /i:"{0}\miguser.xml" /i:"{0}\migapp.xml" /nocompress /l:"{1}\load.log" /progress:"{1}\load_progress.log" /ue:"*\*" /ui:"{2}\{3}" /laC:"{4}" /lae /c /mu:"{2}\{3}:{5}\{6}"' # $UserStateMigrationToolVersionPath, $profileStorePath, $netBiosName, $DomainUserName, $TempPassword, $localComputerName, $JumpCloudUserName
     # JumpCloud Agent Installation Variables
     $AGENT_PATH = "${env:ProgramFiles}\JumpCloud"
     $AGENT_CONF_FILE = "\Plugins\Contrib\jcagent.conf"
@@ -150,7 +150,7 @@ Process
         $CommandScanState = $CommandScanStateTemplate -f $UserStateMigrationToolVersionPath, $profileStorePath, $netBiosName, $DomainUserName
         Write-Log -Message:('Starting ScanState tool on user "' + $netBiosName + '\' + $DomainUserName + '"')
         Write-Log -Message:('ScanState tool is in progress. Command: ' + $CommandScanState)
-        Invoke-Expression -Command:($CommandScanState)
+        Invoke-Expression -command:($CommandScanState)
         Write-Log -Message:('ScanState tool completed for user "' + $netBiosName + '\' + $DomainUserName + '"')
     }
     Catch
