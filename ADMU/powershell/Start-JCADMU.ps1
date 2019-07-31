@@ -10,5 +10,5 @@ If (-not [System.String]::IsNullOrEmpty($formResults))
 Else
 {
     Write-Host ('Exiting ADMU process')
-    Stop-Process -Name form_jcadum
+    Stop-Process -Name form_jcadmu
 }
