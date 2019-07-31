@@ -256,8 +256,8 @@ Function ForceRebootComputerWithDelay
     }
     # Cleanup Folders Again Before Reboot
     Write-Log -Message:('Removing Temp Files & Folders.')
+    Start-Sleep -s 10
     Remove-ItemIfExists -Path:($jcAdmuTempPath) -Recurse
-    # ForceRebootBootComputerWithDelay
     Write-Log -Message:('Forcing reboot of the PC now')
     ForceRebootComputerWithDelay
     #endregion
