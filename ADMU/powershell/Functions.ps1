@@ -196,11 +196,16 @@ Function Add-LocalUser
     ([ADSI]"WinNT://$computer/$group,group").psbase.Invoke("Add", ([ADSI]"WinNT://$computer/$localusername").path)
 }
 #Check if program is installed on system
-Function Check_Program_Installed( $programName )
-{
-    $wmi_check = (Get-WmiObject -Class:('Win32_Product') | Where-Object {$_.Name -like "%$programName%"}).Length -gt 0
-    Return $wmi_check;
-}
+function Check_Program_Installed($programName) {
+    $installed = $null
+    $installed = (Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* | Where {$_.DisplayName -match $programName})
+    if ($installed -ne $null) {
+      return $true
+    }
+    else {
+      return $false
+    }
+  }
 #Start process and wait then close after 5mins
 Function Start-NewProcess([string]$pfile, [string]$arguments, [int32]$Timeout = 300000)
 {
@@ -259,14 +264,14 @@ Function DownloadAndInstallAgent(
     , [System.String]$msvc2013x86Install
 )
 {
-    If (!(Check_Program_Installed("Microsoft Visual C++ 2013 x64")))
+    If (!(Check_Program_Installed("Microsoft Visual C\+\+ 2013 x64")))
     {
         Write-Log -Message:('Downloading & Installing JCAgent prereq Visual C++ 2013 x64')
         DownloadLink -Link:($msvc2013x64Link) -Path:($msvc2013Path + $msvc2013x64File)
         Invoke-Expression -Command:($msvc2013x64Install)
         Write-Log -Message:('JCAgent prereq installed')
     }
-    If (!(Check_Program_Installed("Microsoft Visual C++ 2013 x86")))
+    If (!(Check_Program_Installed("Microsoft Visual C\+\+ 2013 x86")))
     {
         Write-Log -Message:('Downloading & Installing JCAgent prereq Visual C++ 2013 x86')
         DownloadLink -Link:($msvc2013x86Link) -Path:($msvc2013Path + $msvc2013x86File)
@@ -285,7 +290,7 @@ Function DownloadAndInstallAgent(
         InstallAgent
         Write-Log -Message:('JumpCloud Agent Installer Completed')
     }
-    If (Check_Program_Installed("Microsoft Visual C++ 2013 x64") -and Check_Program_Installed("Microsoft Visual C++ 2013 x86") -and AgentIsOnFileSystem)
+    If (Check_Program_Installed("Microsoft Visual C\+\+ 2013 x64") -and Check_Program_Installed("Microsoft Visual C\+\+ 2013 x86") -and AgentIsOnFileSystem)
     {
         Return $true
     }
