@@ -280,7 +280,7 @@ Function DownloadAndInstallAgent(
     }
     If (!(AgentIsOnFileSystem))
     {
-        Start-Sleep -s 10
+        Start-Sleep -s 30
         Write-Log -Message:('Downloading JCAgent Installer')
         # Download Installer
         DownloadAgentInstaller
