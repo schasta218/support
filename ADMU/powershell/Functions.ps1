@@ -180,7 +180,6 @@ Function DownloadLink($Link, $Path)
     {
         Start-Sleep -Seconds 3
     } # While
-    Unregister-Event -SubscriptionId $DownloadCompletedEventSubscriber.Id
     $DownloadCompletedEventSubscriber.Dispose()
     $WebClient.Dispose()
 
