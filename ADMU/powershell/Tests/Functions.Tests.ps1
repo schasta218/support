@@ -124,7 +124,6 @@ Describe 'Functions' {
              }else {
                 Start-Process $app $arg
              }
-             }
              Check_Program_Installed -programName 'FileZilla' | Should Be $true
          }
 
@@ -266,4 +265,3 @@ Describe 'Functions' {
 
     }
 }
-
