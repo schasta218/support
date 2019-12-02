@@ -118,7 +118,7 @@ Describe 'Functions' {
     Context 'Uninstall_Program'{
 
          It 'Install - x32 filezilla' {
-             $app = 'C:\Windows\Temp\FileZilla_3.45.1_win32.exe'
+             $app = 'C:\Windows\Temp\FileZilla_3.46.0_win32.exe'
              $arg = '/S'
              if (Check_Program_Installed -programName 'FileZilla' -eq $true){
              }else {
@@ -128,7 +128,7 @@ Describe 'Functions' {
          }
 
          It 'Uninstall - x32 filezilla' {
-            Uninstall_Program -programName 'FileZilla Client 3.45.1'
+            Uninstall_Program -programName 'FileZilla Client 3.46.0'
             start-sleep -Seconds 5
             Check_Program_Installed -programName 'FileZilla' | Should Be $false
         }
