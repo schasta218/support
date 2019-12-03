@@ -276,7 +276,7 @@ Function DownloadAndInstallAgent(
         #Start-Sleep -s 20
         Write-Log -Message:('Downloading JCAgent Installer')
         #Download Installer
-        #DownloadAgentInstaller
+        DownloadAgentInstaller
         Write-Log -Message:('JumpCloud Agent Download Complete')
         Write-Log -Message:('Running JCAgent Installer')
         #Run Installer
