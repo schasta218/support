@@ -285,11 +285,11 @@ Function DownloadAndInstallAgent(
     }
     If (Check_Program_Installed("Microsoft Visual C\+\+ 2013 x64") -and Check_Program_Installed("Microsoft Visual C\+\+ 2013 x86") -and AgentIsOnFileSystem)
     {
-        Return $true
+        #Return $true
     }
     Else
     {
-        Return $false
+        #Return $false
     }
 }
 
