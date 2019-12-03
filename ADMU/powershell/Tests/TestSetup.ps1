@@ -38,7 +38,7 @@ if (Check_Program_Installed('Jumpcloud')){
 #Uninstall_Program -programName 'jumpcloud'
 try
 {
-& cmd /C "C:\Program Files\JumpCloud\unins000.exe" /Silent
+& cmd /C "C:\Program Files\JumpCloud\unins000.exe" /Silent | Out-Null
 }
 catch {
     Write-Host 'CAUGHT1'
