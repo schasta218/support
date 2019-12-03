@@ -44,13 +44,12 @@ if(Check_Program_Installed('Microsoft Visual C\+\+ 2013 x64') -or (Check_Program
 Uninstall_Program -programName 'Microsoft Visual C'}
 
 #install jcagent and prereq
-$ConfirmInstall = DownloadAndInstallAgent -msvc2013x64link:($msvc2013x64Link) -msvc2013path:($jcAdmuTempPath) -msvc2013x64file:($msvc2013x64File) -msvc2013x64install:($msvc2013x64Install) -msvc2013x86link:($msvc2013x86Link) -msvc2013x86file:($msvc2013x86File) -msvc2013x86install:($msvc2013x86Install)
+try
+{
+    $ConfirmInstall = DownloadAndInstallAgent -msvc2013x64link:($msvc2013x64Link) -msvc2013path:($jcAdmuTempPath) -msvc2013x64file:($msvc2013x64File) -msvc2013x64install:($msvc2013x64Install) -msvc2013x86link:($msvc2013x86Link) -msvc2013x86file:($msvc2013x86File) -msvc2013x86install:($msvc2013x86Install)
 
-Write-Output $error.Count
-Write-Output $error
-
-if ($error.count -gt 0){
-    exit 1
-} else {
-    exit 0
+}
+catch
+{
+    Write-Host 'CAUGHT'
 }
