@@ -36,12 +36,24 @@ New-Item -ItemType Directory -Path 'C:\windows\Temp\JCADMU' -Force
 #Is agent installed? If so uninstall it
 if (Check_Program_Installed('Jumpcloud')){
 #Uninstall_Program -programName 'jumpcloud'
+try
+{
 & cmd /C "C:\Program Files\JumpCloud\unins000.exe" /Silent
+}
+catch {
+    Write-Host 'CAUGHT1'
+}
 }
 
 #Is vcredistx86 & vcredistx64 installed? If so uninstall it
 if(Check_Program_Installed('Microsoft Visual C\+\+ 2013 x64') -or (Check_Program_Installed('Microsoft Visual C\+\+ 2013 x86'))){
-Uninstall_Program -programName 'Microsoft Visual C'}
+try {
+    Uninstall_Program -programName 'Microsoft Visual C'
+}
+catch {
+    Write-Host 'CAUGHT2'
+}
+    }
 
 #install jcagent and prereq
 try
@@ -51,5 +63,5 @@ try
 }
 catch
 {
-    Write-Host 'CAUGHT'
+    Write-Host 'CAUGHT3'
 }
