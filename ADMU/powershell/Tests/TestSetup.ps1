@@ -40,7 +40,7 @@ if (Check_Program_Installed('Jumpcloud')){
 
 #Is vcredistx86 & vcredistx64 installed? If so uninstall it
 if(Check_Program_Installed('Microsoft Visual C\+\+ 2013 x64') -or (Check_Program_Installed('Microsoft Visual C\+\+ 2013 x86'))){
-    #Uninstall_Program -programName 'Microsoft Visual C'
+    Uninstall_Program -programName 'Microsoft Visual C'
 }
 
 #install jcagent and prereq

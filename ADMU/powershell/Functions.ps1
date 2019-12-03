@@ -183,17 +183,17 @@ function Uninstall_Program($programName) {
       Get-ItemProperty |
           Where-Object {$_.DisplayName -match $programName } |
               Select-Object -Property DisplayName, UninstallString
-  
+
      ForEach ($ver in $Ver) {
         If ($ver.UninstallString -and $ver.DisplayName -match 'Jumpcloud') {
-            $uninst = $ver.UninstallString
+            $uninst = $ver.UninstallString | Out-Null
             & cmd /C $uninst /Silent
         } If ($ver.UninstallString -and $ver.DisplayName -match 'FileZilla Client 3.46.0') {
-            $uninst = $ver.UninstallString
+            $uninst = $ver.UninstallString | Out-Null
             & cmd /c $uninst /S
         } else{
             $uninst = $ver.UninstallString
-            & cmd /c $uninst /q /norestart
+            & cmd /c $uninst /q /norestart | Out-Null
         }
     }
   }
