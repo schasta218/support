@@ -262,34 +262,34 @@ Function DownloadAndInstallAgent(
         Write-Log -Message:('Downloading & Installing JCAgent prereq Visual C++ 2013 x64')
         #DownloadLink -Link:($msvc2013x64Link) -Path:($msvc2013Path + $msvc2013x64File)
         #Invoke-Expression -Command:($msvc2013x64Install)
-        #Write-Log -Message:('JCAgent prereq installed')
+        Write-Log -Message:('JCAgent prereq installed')
     }
     If (!(Check_Program_Installed("Microsoft Visual C\+\+ 2013 x86")))
     {
-        #Write-Log -Message:('Downloading & Installing JCAgent prereq Visual C++ 2013 x86')
+        Write-Log -Message:('Downloading & Installing JCAgent prereq Visual C++ 2013 x86')
         #DownloadLink -Link:($msvc2013x86Link) -Path:($msvc2013Path + $msvc2013x86File)
         #Invoke-Expression -Command:($msvc2013x86Install)
-        #Write-Log -Message:('JCAgent prereq installed')
+        Write-Log -Message:('JCAgent prereq installed')
     }
     If (!(AgentIsOnFileSystem))
     {
         #Start-Sleep -s 20
-        #Write-Log -Message:('Downloading JCAgent Installer')
+        Write-Log -Message:('Downloading JCAgent Installer')
         #Download Installer
         DownloadAgentInstaller
-        #Write-Log -Message:('JumpCloud Agent Download Complete')
-        #Write-Log -Message:('Running JCAgent Installer')
+        Write-Log -Message:('JumpCloud Agent Download Complete')
+        Write-Log -Message:('Running JCAgent Installer')
         #Run Installer
         #InstallAgent
-        #Write-Log -Message:('JumpCloud Agent Installer Completed')
+        Write-Log -Message:('JumpCloud Agent Installer Completed')
     }
     If (Check_Program_Installed("Microsoft Visual C\+\+ 2013 x64") -and Check_Program_Installed("Microsoft Visual C\+\+ 2013 x86") -and AgentIsOnFileSystem)
     {
-        #Return $true
+        Return $true
     }
     Else
     {
-        #Return $false
+        Return $false
     }
 }
 
