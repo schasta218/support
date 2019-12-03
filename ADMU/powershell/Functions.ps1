@@ -267,7 +267,7 @@ Function DownloadAndInstallAgent(
     If (!(Check_Program_Installed("Microsoft Visual C\+\+ 2013 x86")))
     {
         Write-Log -Message:('Downloading & Installing JCAgent prereq Visual C++ 2013 x86')
-        DownloadLink -Link:($msvc2013x86Link) -Path:($jcAdmuTempPath + $msvc2013x86File)
+        #DownloadLink -Link:($msvc2013x86Link) -Path:($jcAdmuTempPath + $msvc2013x86File)
         #Invoke-Expression -Command:($msvc2013x86Install)
         Write-Log -Message:('JCAgent prereq installed')
     }
@@ -289,7 +289,7 @@ Function DownloadAndInstallAgent(
     }
     Else
     {
-        Return $true
+        Return $false
     }
 }
 
