@@ -289,7 +289,7 @@ Function DownloadAndInstallAgent(
     }
     Else
     {
-        Return $false
+        Return $true
     }
 }
 
