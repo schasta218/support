@@ -2,7 +2,7 @@
 
 #*******************************************************************************
 #
-#       Version 2.0 | See the CHANGELOG.md for version information
+#       Version 2.2 | See the CHANGELOG.md for version information
 #
 #       See the ReadMe file for detailed configuration steps.
 #
@@ -147,6 +147,10 @@ DEP_N_GATE_DONE="/var/tmp/com.jumpcloud.gate.done"
 # First condition - is JC installed
 if [[ ! -f $DEP_N_GATE_INSTALLJC ]]; then
 
+    # Caffeinate this script
+    caffeinate -d -i -m -u &
+    caffeinatePID=$!
+
     # Install DEPNotify
     curl --silent --output /tmp/DEPNotify-1.1.5.pkg "https://s3.amazonaws.com/nomadbetas/DEPNotify-1.1.5.pkg" >/dev/null
     installer -pkg /tmp/DEPNotify-1.1.5.pkg -target /
@@ -255,11 +259,16 @@ EOF
     echo "Status: JumpCloud agent installed!" >>"$DEP_N_LOG"
 
     # JumpCloud installed - add gate file
+    kill ${caffeinatePID}
     touch $DEP_N_GATE_INSTALLJC
 fi
 # Check if the system has yet to be added to JumpCloud
 if [[ ! -f $DEP_N_GATE_SYSADD ]]; then
-    Sleep 1
+    # Caffeinate next code block
+    caffeinate -d -i -m -u &
+    caffeinatePID=$!
+
+    sleep 1
 
     echo "Status: Pulling configuration settings from JumpCloud" >>"$DEP_N_LOG"
 
@@ -452,10 +461,14 @@ if [[ ! -f $DEP_N_GATE_UI ]]; then
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     # user interaction complete - add gate file
+    kill ${caffeinatePID}
     touch $DEP_N_GATE_UI
 fi
 # Final steps to complete the install
 if [[ ! -f $DEP_N_GATE_DONE ]]; then
+    # Caffeniate next code block
+    caffeinate -d -i -m -u &
+    caffeinatePID=$!
     ## Get the JumpCloud SystemID
     conf="$(cat /opt/jc/jcagent.conf)"
     regex='\"systemKey\":\"[a-zA-Z0-9]{24}\"'
@@ -610,6 +623,8 @@ if [[ ! -f $DEP_N_GATE_DONE ]]; then
     echo "Status: Enrollment Complete" >>"$DEP_N_LOG"
     echo "$(date "+%Y-%m-%dT%H:%M:%S") Status: Enrollment Complete" >>"$DEP_N_DEBUG"
 
+    kill ${caffeinatePID}
+    touch $DEP_N_GATE_DONE
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # END Post login active session workflow                                       ~
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
