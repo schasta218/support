@@ -49,7 +49,7 @@ try {
     {
     
         $WebClient = New-Object -TypeName:('System.Net.WebClient')
-        $Global:IsDownloaded = $false
+        $IsDownloaded = $false
         $SplatArgs = @{ InputObject = $WebClient
             EventName               = 'DownloadFileCompleted'
             Action                  = {$Global:IsDownloaded = $true; }
