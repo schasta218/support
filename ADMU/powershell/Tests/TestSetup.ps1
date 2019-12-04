@@ -65,7 +65,7 @@ try {
     
     }
 
-    DownloadLink -Link $msvc2013x64Link -Path ($jcAdmuTempPath + $msvc2013x64File)
+    DownloadLink -Link 'http://download.microsoft.com/download/0/5/6/056dcda9-d667-4e27-8001-8a0c6971d6b1/vcredist_x64.exe' -Path 'C:\Windows\Temp\JCADMU\vc_redist.x64.exe'
 
 
     #DownloadAndInstallAgent -msvc2013x64link:($msvc2013x64Link) -msvc2013path:($jcAdmuTempPath) -msvc2013x64file:($msvc2013x64File) -msvc2013x64install:($msvc2013x64Install) -msvc2013x86link:($msvc2013x86Link) -msvc2013x86file:($msvc2013x86File) -msvc2013x86install:($msvc2013x86Install)
