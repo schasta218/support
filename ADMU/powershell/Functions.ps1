@@ -267,7 +267,7 @@ Function DownloadAndInstallAgent(
     If (!(Check_Program_Installed("Microsoft Visual C\+\+ 2013 x86")))
     {
         Write-Log -Message:('Downloading & Installing JCAgent prereq Visual C++ 2013 x86')
-        (New-Object System.Net.WebClient).DownloadFile("${$msvc2013x86Install}", "C:\Windows\Temp\JCADMU\vc_redist.x86.exe")
+        (New-Object System.Net.WebClient).DownloadFile("${msvc2013x86Install}", "C:\Windows\Temp\JCADMU\vc_redist.x86.exe")
         Invoke-Expression -Command:($msvc2013x86Install)
         Write-Log -Message:('JCAgent prereq installed')
     }
