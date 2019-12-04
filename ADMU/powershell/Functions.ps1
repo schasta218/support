@@ -260,7 +260,8 @@ Function DownloadAndInstallAgent(
     If (!(Check_Program_Installed("Microsoft Visual C\+\+ 2013 x64")))
     {
         Write-Log -Message:('Downloading & Installing JCAgent prereq Visual C++ 2013 x64')
-        #DownloadLink -Link:($msvc2013x64Link) -Path:($jcAdmuTempPath + $msvc2013x64File)
+        $1 = ($jcAdmuTempPath + $msvc2013x64File)
+        DownloadLink -Link:($msvc2013x64Link) -Path:($1)
         #Invoke-Expression -Command:($msvc2013x64Install)
         Write-Log -Message:('JCAgent prereq installed')
     }
