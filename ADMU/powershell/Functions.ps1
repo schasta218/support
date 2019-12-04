@@ -260,16 +260,15 @@ Function DownloadAndInstallAgent(
     If (!(Check_Program_Installed("Microsoft Visual C\+\+ 2013 x64")))
     {
         Write-Log -Message:('Downloading & Installing JCAgent prereq Visual C++ 2013 x64')
-        $1 = ($jcAdmuTempPath + $msvc2013x64File)
-        DownloadLink -Link:($msvc2013x64Link) -Path:($1)
-        #Invoke-Expression -Command:($msvc2013x64Install)
+        (New-Object System.Net.WebClient).DownloadFile("${msvc2013x64Link}", "C:\Windows\Temp\JCADMU\vc_redist.x64.exe")
+        Invoke-Expression -Command:($msvc2013x64Install)
         Write-Log -Message:('JCAgent prereq installed')
     }
     If (!(Check_Program_Installed("Microsoft Visual C\+\+ 2013 x86")))
     {
         Write-Log -Message:('Downloading & Installing JCAgent prereq Visual C++ 2013 x86')
-        #DownloadLink -Link:($msvc2013x86Link) -Path:($jcAdmuTempPath + $msvc2013x86File)
-        #Invoke-Expression -Command:($msvc2013x86Install)
+        (New-Object System.Net.WebClient).DownloadFile("${$msvc2013x86Install}", "C:\Windows\Temp\JCADMU\vc_redist.x86.exe")
+        Invoke-Expression -Command:($msvc2013x86Install)
         Write-Log -Message:('JCAgent prereq installed')
     }
     If (!(AgentIsOnFileSystem))
@@ -281,7 +280,7 @@ Function DownloadAndInstallAgent(
         Write-Log -Message:('JumpCloud Agent Download Complete')
         Write-Log -Message:('Running JCAgent Installer')
         #Run Installer
-        #InstallAgent
+        InstallAgent
         Write-Log -Message:('JumpCloud Agent Installer Completed')
     }
     If (Check_Program_Installed("Microsoft Visual C\+\+ 2013 x64") -and Check_Program_Installed("Microsoft Visual C\+\+ 2013 x86") -and AgentIsOnFileSystem)
