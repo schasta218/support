@@ -4,7 +4,6 @@ Param(
 
 # Load functions
 . 'C:\agent\_work\1\s\ADMU\powershell\Functions.ps1'
-
 #USMT & VC Variables
 $jcAdmuTempPath = 'C:\Windows\Temp\JCADMU\'
 $msvc2013x64File = 'vc_redist.x64.exe'
@@ -30,18 +29,15 @@ $JumpCloudConnectKey = $TestOrgConnectKey
 if ((Test-Path 'C:\Windows\Temp\JCADMU') -eq $true){
     remove-item -Path 'C:\windows\Temp\JCADMU' -Force -Recurse
 }
-Recreate JCADMU folder
+#Recreate JCADMU folder
 New-Item -ItemType Directory -Path 'C:\windows\Temp\JCADMU' -Force
-
-##Is agent installed? If so uninstall it
+#Is agent installed? If so uninstall it
 if (Check_Program_Installed('Jumpcloud')){
 & cmd /C "C:\Program Files\JumpCloud\unins000.exe" /Silent
 }
-
 #Is vcredistx86 & vcredistx64 installed? If so uninstall it
 if(Check_Program_Installed('Microsoft Visual C\+\+ 2013 x64') -or (Check_Program_Installed('Microsoft Visual C\+\+ 2013 x86'))){
     Uninstall_Program -programName 'Microsoft Visual C'
 }
-
 #install jcagent and prereq
     DownloadAndInstallAgent -msvc2013x64link:($msvc2013x64Link) -msvc2013path:($jcAdmuTempPath) -msvc2013x64file:($msvc2013x64File) -msvc2013x64install:($msvc2013x64Install) -msvc2013x86link:($msvc2013x86Link) -msvc2013x86file:($msvc2013x86File) -msvc2013x86install:($msvc2013x86Install)
