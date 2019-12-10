@@ -112,8 +112,8 @@
     $userstrim = $users -creplace '^[^\\]*\\', ''
 
     $members = net localgroup administrators |
-    where {$_ -AND $_ -notmatch "command completed successfully"} |
-    select -Skip 4
+    Where-Object {$_ -AND $_ -notmatch "command completed successfully"} |
+    Select-Object -Skip 4
 
     $i = 0
     ForEach ($user in $userstrim) {
@@ -132,10 +132,10 @@
     $LocalUserProfilesTrim =  ForEach ($LocalPath in $LocalUserProfiles){$LocalPath.LocalPath.substring(9)}
 
     $i = 0
-    $profiles2 = Get-ChildItem C:\Users | ?{Test-path C:\Users\$_\NTUSER.DAT} | Select -ExpandProperty Name
+    Get-ChildItem C:\Users | Where-Object{Test-path C:\Users\$_\NTUSER.DAT} | Select-Object -ExpandProperty Name
     foreach($userprofile in $LocalUserProfilesTrim)
         {
-        $largeprofile = Get-ChildItem C:\Users\$userprofile -Recurse -Force -ErrorAction SilentlyContinue | Measure-Object -Sum length | Select -ExpandProperty Sum
+        $largeprofile = Get-ChildItem C:\Users\$userprofile -Recurse -Force -ErrorAction SilentlyContinue | Measure-Object -Sum length | Select-Object -ExpandProperty Sum
         $largeprofile =  [math]::Round($largeprofile/1MB,0)
         $largeprofile =  $largeprofile
         $win32UserProfiles[$i].LocalProfileSize = $largeprofile
@@ -180,9 +180,9 @@
      Write-Debug ('Has UserName not been selected: ' + [System.String]::IsNullOrEmpty($lvProfileList.SelectedItem.UserName))
      If(![System.String]::IsNullOrEmpty($lvProfileList.SelectedItem.UserName))
      {
-         If(!(Test-IsNotEmpty $tbJumpCloudUserName.Text) -and (Test-HasNoSpaces $tbJumpCloudUserName.Text) `
-         -and (Test-Is40chars $tbJumpCloudConnectKey.Text) -and (Test-HasNoSpaces $tbJumpCloudConnectKey.Text) `
-         -and !(Test-IsNotEmpty $tbTempPassword.Text) -and (Test-HasNoSpaces $tbTempPassword.Text))
+         If(!(Test-IsNotEmpty $tbJumpCloudUserName.Text) -and (Test-HasNoSpace $tbJumpCloudUserName.Text) `
+         -and (Test-Is40chars $tbJumpCloudConnectKey.Text) -and (Test-HasNoSpace $tbJumpCloudConnectKey.Text) `
+         -and !(Test-IsNotEmpty $tbTempPassword.Text) -and (Test-HasNoSpace $tbTempPassword.Text))
          {
              $script:bDeleteProfile.Content = "Migrate Profile"
              $script:bDeleteProfile.IsEnabled = $true
@@ -193,7 +193,7 @@
              $script:bDeleteProfile.Content = "Correct Errors"
              $script:bDeleteProfile.IsEnabled = $false
              Return $false
-         }        
+         }
      }
      Else
      {
@@ -227,7 +227,7 @@
 
  $tbJumpCloudUserName.add_TextChanged( {
          Test-Button -tbJumpCloudUserName:($tbJumpCloudUserName) -tbJumpCloudConnectKey:($tbJumpCloudConnectKey) -tbTempPassword:($tbTempPassword) -lvProfileList:($lvProfileList)
-         If ((!(Test-IsNotEmpty $tbJumpCloudUserName.Text) -and (Test-HasNoSpaces $tbJumpCloudUserName.Text)) -eq $false)
+         If ((!(Test-IsNotEmpty $tbJumpCloudUserName.Text) -and (Test-HasNoSpace $tbJumpCloudUserName.Text)) -eq $false)
          {
              $tbJumpCloudUserName.Background = "#FFC6CBCF"
              $tbJumpCloudUserName.Tooltip = "JumpCloud User Name Can't Be Empty Or Contain Spaces"
@@ -246,7 +246,7 @@
 
  $tbJumpCloudConnectKey.add_TextChanged( {
          Test-Button -tbJumpCloudUserName:($tbJumpCloudUserName) -tbJumpCloudConnectKey:($tbJumpCloudConnectKey) -tbTempPassword:($tbTempPassword) -lvProfileList:($lvProfileList)
-         If (((Test-Is40chars $tbJumpCloudConnectKey.Text) -and (Test-HasNoSpaces $tbJumpCloudConnectKey.Text)) -eq $false)
+         If (((Test-Is40chars $tbJumpCloudConnectKey.Text) -and (Test-HasNoSpace $tbJumpCloudConnectKey.Text)) -eq $false)
          {
              $tbJumpCloudConnectKey.Background = "#FFC6CBCF"
              $tbJumpCloudConnectKey.Tooltip = "Connect Key Must be 40chars & Not Contain Spaces"
@@ -264,8 +264,8 @@
  })
 
  $tbTempPassword.add_TextChanged( {
-         Test-Button -tbJumpCloudUserName:($tbJumpCloudUserName) -tbJumpCloudConnectKey:($tbJumpCloudConnectKey) -tbTempPassword:($tbTempPassword) -lvProfileList:($lvProfileList) 
-         If ((!(Test-IsNotEmpty $tbTempPassword.Text) -and (Test-HasNoSpaces $tbTempPassword.Text)) -eq $false)
+         Test-Button -tbJumpCloudUserName:($tbJumpCloudUserName) -tbJumpCloudConnectKey:($tbJumpCloudConnectKey) -tbTempPassword:($tbTempPassword) -lvProfileList:($lvProfileList)
+         If ((!(Test-IsNotEmpty $tbTempPassword.Text) -and (Test-HasNoSpace $tbTempPassword.Text)) -eq $false)
          {
              $tbTempPassword.Background = "#FFC6CBCF"
              $tbTempPassword.Tooltip = "Connect Key Must Be 40chars & No spaces"
