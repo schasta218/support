@@ -6,7 +6,7 @@ Describe 'Migration' {
 
         Mock -CommandName Get-WmiObject
         $WmiComputerSystem = [PSCustomObject]@{}
-        Add-Member -InputObject:($WmiComputerSystem) -MemberType:('NoteProperty') -Name:('partOfDomain') -Value:($false)
+        Add-Member -InputObject:($WmiComputerSystem) -MemberType:('NoteProperty') -Name:('partOfDomain') -Value:($true)
 
         $WmiComputerSystem.partOfDomain | Should Be $true
        }
