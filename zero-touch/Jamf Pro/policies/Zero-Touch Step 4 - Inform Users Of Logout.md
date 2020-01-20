@@ -28,4 +28,4 @@ During login you will be asked to enter a PREVIOUS PASSWORD and a PASSWORD
 
 ## Options - Script - Configure
 
-[jc_five_second_pause](https://github.com/TheJumpCloud/support/blob/master/zero-touch/Jamf%20Pro/scripts/jc_five_second_pause.md)
+[jc_account_logout](https://github.com/TheJumpCloud/support/blob/master/zero-touch/Jamf%20Pro/scripts/jc_account_logout.md)
